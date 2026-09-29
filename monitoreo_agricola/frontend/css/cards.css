@@ -1,0 +1,255 @@
+/* Finca Cards Grid */
+.fincas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+@media (max-width: 560px) {
+    .fincas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.finca-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-card);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.finca-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #34d399, #059669);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.finca-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+    box-shadow: var(--shadow-card), var(--shadow-glow-green);
+}
+
+.finca-card:hover::before {
+    opacity: 1;
+}
+
+/* Alert state */
+.finca-card.alert-active {
+    border-color: var(--alert-red) !important;
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.06) 0%, var(--bg-card) 40%);
+    animation: card-alert-pulse 2s ease-in-out infinite;
+}
+
+.finca-card.alert-active::before {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+    opacity: 1;
+    height: 3px;
+}
+
+@keyframes card-alert-pulse {
+
+    0%,
+    100% {
+        box-shadow: var(--shadow-card), 0 0 0 0 var(--alert-red-glow);
+    }
+
+    50% {
+        box-shadow: var(--shadow-card), 0 0 24px 4px var(--alert-red-glow);
+    }
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.finca-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-green-dim);
+}
+
+.finca-icon svg {
+    width: 18px;
+    height: 18px;
+    color: var(--accent-green);
+}
+
+.finca-card.alert-active .finca-icon {
+    background: var(--alert-red-dim);
+}
+
+.finca-card.alert-active .finca-icon svg {
+    color: var(--alert-red);
+}
+
+.finca-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.alert-badge {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--alert-red-dim);
+    color: var(--alert-red);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.alert-badge.visible {
+    display: flex;
+}
+
+.alert-badge svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* Metric Cards */
+.metrics-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.metric-box {
+    background: var(--bg-metric);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-box:hover {
+    border-color: rgba(148, 163, 184, 0.15);
+    transform: translateY(-1px);
+}
+
+.metric-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.metric-label svg {
+    width: 12px;
+    height: 12px;
+}
+
+.metric-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+}
+
+.metric-unit {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.metric-value.temp {
+    color: var(--accent-orange);
+}
+
+.metric-value.hum {
+    color: var(--accent-blue);
+}
+
+.metric-value.co2 {
+    color: var(--accent-slate);
+}
+
+/* Progress bar under metric */
+.metric-bar {
+    margin-top: 10px;
+    height: 3px;
+    background: rgba(148, 163, 184, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.metric-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+}
+
+.metric-bar-fill.temp {
+    background: linear-gradient(90deg, #fb923c, #ef4444);
+}
+
+.metric-bar-fill.hum {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6);
+}
+
+.metric-bar-fill.co2 {
+    background: linear-gradient(90deg, #94a3b8, #ef4444);
+}
+
+/* Alert highlight on metric */
+.metric-box.metric-alert {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.card-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 16px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    gap: 5px;
+}
+
+.card-footer svg {
+    width: 12px;
+    height: 12px;
+    opacity: 0.6;
+}
