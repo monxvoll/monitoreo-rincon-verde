@@ -25,7 +25,7 @@ pip install -r requirements.txt
 
 ## Ejecucion
 
-Necesitas 3 terminales y Redis corriendo.
+ 3 terminales y Redis corriendo.
 
 **Redis con Docker:**
 ```bash
