@@ -1,5 +1,7 @@
-import { UMBRAL_TEMP, UMBRAL_CO2, MAX_HISTORIAL } from './config.js';
+import { UMBRAL_TEMP, UMBRAL_CO2, MAX_HISTORIAL, INTERVALO_ALERTAS_MS } from './config.js';
 import { formatearHora, pct } from './utils.js';
+
+const ultimasAlertas = {};
 
 export function mostrarToast(mensaje) {
     const container = document.getElementById("toast-container");
@@ -59,11 +61,19 @@ export function actualizarTarjeta(datos) {
     badge.classList.toggle("visible", isAlert);
 
     if (isAlert) {
-        const reasons = [];
-        if (datos.temperatura > UMBRAL_TEMP) reasons.push(`Temp ${datos.temperatura}C`);
-        if (datos.co2 > UMBRAL_CO2) reasons.push(`CO2 ${datos.co2} ppm`);
-        const fincaLabel = id === "finca_1" ? "Finca 1" : "Finca 2";
-        mostrarToast(`${fincaLabel}: ${reasons.join(" - ")}`);
+        const ahora = Date.now();
+        const ultimaAlerta = ultimasAlertas[id] || 0;
+
+        // Solo mostrar una alerta cada INTERVALO_ALERTAS_MS para no saturar la UI
+        if (ahora - ultimaAlerta >= INTERVALO_ALERTAS_MS) {
+            const reasons = [];
+            if (datos.temperatura > UMBRAL_TEMP) reasons.push(`Temp ${datos.temperatura}C`);
+            if (datos.co2 > UMBRAL_CO2) reasons.push(`CO2 ${datos.co2} ppm`);
+            const fincaLabel = id === "finca_1" ? "Finca 1" : "Finca 2";
+            mostrarToast(`${fincaLabel}: ${reasons.join(" - ")}`);
+            
+            ultimasAlertas[id] = ahora;
+        }
     }
 }
 
