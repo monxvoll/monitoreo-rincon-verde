@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Panel de monitoreo agrícola en tiempo real para Rincón Verde. Visualiza temperatura, humedad y CO2 de tus fincas.">
+    <title>Rincón Verde — Monitoreo Agrícola</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* 
+           Design System — Tokens */
+        :root {
+            --bg-primary: #0b1120;
+            --bg-secondary: #111827;
+            --bg-card: #1a2235;
+            --bg-card-hover: #1f2a3f;
+            --bg-metric: #0f1729;
+
+            --border-subtle: rgba(148, 163, 184, 0.08);
+            --border-active: rgba(52, 211, 153, 0.3);
+
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+
+            --accent-green: #34d399;
+            --accent-green-dim: rgba(52, 211, 153, 0.15);
+            --accent-orange: #fb923c;
+            --accent-orange-dim: rgba(251, 146, 60, 0.15);
+            --accent-blue: #60a5fa;
+            --accent-blue-dim: rgba(96, 165, 250, 0.15);
+            --accent-slate: #cbd5e1;
+            --accent-slate-dim: rgba(203, 213, 225, 0.1);
+
+            --alert-red: #ef4444;
+            --alert-red-dim: rgba(239, 68, 68, 0.12);
+            --alert-red-glow: rgba(239, 68, 68, 0.35);
+
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25);
+            --shadow-glow-green: 0 0 30px rgba(52, 211, 153, 0.08);
+        }
+
+        /* 
+           Base Reset & Typography */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 
+           Layout */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 20px 48px;
+        }
+
+        /* 
+           Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #34d399, #059669);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(52, 211, 153, 0.25);
+        }
+
+        .brand-icon svg {
+            width: 22px;
+            height: 22px;
+            color: white;
+        }
+
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #34d399, #6ee7b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.03em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .connection-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            transition: all 0.4s ease;
+        }
+
+        .connection-badge.offline {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .connection-badge.online {
+            background: var(--accent-green-dim);
+            color: var(--accent-green);
+            border: 1px solid var(--border-active);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--alert-red);
+            transition: background 0.4s ease;
+        }
+
+        .connection-badge.online .status-dot {
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* 
+           Finca Cards Grid */
+        .fincas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 560px) {
+            .fincas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .finca-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .finca-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #34d399, #059669);
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .finca-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-active);
+            box-shadow: var(--shadow-card), var(--shadow-glow-green);
+        }
+
+        .finca-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Alert state */
+        .finca-card.alert-active {
+            border-color: var(--alert-red) !important;
+            background: linear-gradient(180deg, rgba(239, 68, 68, 0.06) 0%, var(--bg-card) 40%);
+            animation: card-alert-pulse 2s ease-in-out infinite;
+        }
+
+        .finca-card.alert-active::before {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            opacity: 1;
+            height: 3px;
+        }
+
+        @keyframes card-alert-pulse {
+
+            0%,
+            100% {
+                box-shadow: var(--shadow-card), 0 0 0 0 var(--alert-red-glow);
+            }
+
+            50% {
+                box-shadow: var(--shadow-card), 0 0 24px 4px var(--alert-red-glow);
+            }
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .finca-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-green-dim);
+        }
+
+        .finca-icon svg {
+            width: 18px;
+            height: 18px;
+            color: var(--accent-green);
+        }
+
+        .finca-card.alert-active .finca-icon {
+            background: var(--alert-red-dim);
+        }
+
+        .finca-card.alert-active .finca-icon svg {
+            color: var(--alert-red);
+        }
+
+        .finca-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .alert-badge {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: var(--alert-red-dim);
+            color: var(--alert-red);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .alert-badge.visible {
+            display: flex;
+        }
+
+        .alert-badge svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Metric Cards */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .metric-box {
+            background: var(--bg-metric);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-box:hover {
+            border-color: rgba(148, 163, 184, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .metric-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .metric-label svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        .metric-unit {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .metric-value.temp {
+            color: var(--accent-orange);
+        }
+
+        .metric-value.hum {
+            color: var(--accent-blue);
+        }
+
+        .metric-value.co2 {
+            color: var(--accent-slate);
+        }
+
+        /* Progress bar under metric */
+        .metric-bar {
+            margin-top: 10px;
+            height: 3px;
+            background: rgba(148, 163, 184, 0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+        }
+
+        .metric-bar-fill.temp {
+            background: linear-gradient(90deg, #fb923c, #ef4444);
+        }
+
+        .metric-bar-fill.hum {
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+        }
+
+        .metric-bar-fill.co2 {
+            background: linear-gradient(90deg, #94a3b8, #ef4444);
+        }
+
+        /* Alert highlight on metric */
+        .metric-box.metric-alert {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 16px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            gap: 5px;
+        }
+
+        .card-footer svg {
+            width: 12px;
+            height: 12px;
+            opacity: 0.6;
+        }
+
+        /* ══════════════════════════════════════════
+           History Section
+           ══════════════════════════════════════════ */
+        .history-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .history-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-header-left svg {
+            width: 18px;
+            height: 18px;
+            color: var(--accent-green);
+        }
+
+        .history-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .history-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .history-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 420px;
+        }
+
+        @media (max-width: 768px) {
+            .history-columns {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        .history-column {
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .history-column:first-child {
+            border-right: 1px solid var(--border-subtle);
+        }
+
+        @media (max-width: 768px) {
+            .history-column:first-child {
+                border-right: none;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+
+            .history-column {
+                max-height: 300px;
+            }
+        }
+
+        /* Hide scrollbar */
+        .history-column::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .history-column::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .history-column::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.15);
+            border-radius: 4px;
+        }
+
+        .column-label {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--bg-secondary);
+            padding: 10px 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-green);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .column-label svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+        }
+
+        thead {
+            position: sticky;
+            top: 36px;
+            z-index: 9;
+        }
+
+        thead th {
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(148, 163, 184, 0.04);
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(148, 163, 184, 0.04);
+        }
+
+        tbody td {
+            padding: 10px 16px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        tbody tr.row-alert td {
+            color: #fca5a5;
+        }
+
+        tbody tr.row-alert {
+            background: var(--alert-red-dim);
+        }
+
+        /* ══════════════════════════════════════════
+           Toast Notifications
+           ══════════════════════════════════════════ */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            font-weight: 600;
+            pointer-events: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: toast-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            max-width: 380px;
+        }
+
+        .toast.alert {
+            background: linear-gradient(135deg, #991b1b, #7f1d1d);
+            color: #fecaca;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+        }
+
+        .toast svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        @keyframes toast-in {
+            from {
+                opacity: 0;
+                transform: translateX(60px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes toast-out {
+            from {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(60px) scale(0.9);
+            }
+        }
+
+        /* 
+           Row Animations */
+        @keyframes row-fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .row-new {
+            animation: row-fade-in 0.35s ease-out;
+        }
+
+        /* 
+           Value flash animation */
+        @keyframes value-flash {
+            0% {
+                opacity: 0.4;
+                transform: scale(0.96);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.04);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .value-updated {
+            animation: value-flash 0.4s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <div class="app-container">
+
+        <!-- ═══ Header ═══ -->
+        <header class="header">
+            <div class="header-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M7 20h10" />
+                        <path d="M10 20c5.5-2.5.8-6.4 3-10" />
+                        <path
+                            d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z" />
+                        <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="brand-title">Rincón Verde</div>
+                    <div class="brand-subtitle">Monitoreo Agrícola en Tiempo Real</div>
+                </div>
+            </div>
+            <div id="ws-badge" class="connection-badge offline">
+                <span class="status-dot"></span>
+                <span id="ws-status-text">Desconectado</span>
+            </div>
+        </header>
+
+        <!-- ═══ Finca Cards ═══ -->
+        <section class="fincas-grid">
+
+            <!-- Finca 1 -->
+            <div id="card-finca_1" class="finca-card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="finca-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                <polyline points="9 22 9 12 15 12 15 22" />
+                            </svg>
+                        </div>
+                        <span class="finca-name">Finca 1</span>
+                    </div>
+                    <div id="badge-finca_1" class="alert-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                            <line x1="12" y1="9" x2="12" y2="13" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                        </svg>
+                        Alerta
+                    </div>
+                </div>
+                <div class="metrics-row">
+                    <div id="metric-temp-finca_1" class="metric-box">
+                        <div class="metric-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z" />
+                            </svg>
+                            Temp
+                        </div>
+                        <div class="metric-value temp"><span id="temp-finca_1">--</span></div>
+                        <div class="metric-unit">°C</div>
+                        <div class="metric-bar">
+                            <div id="bar-temp-finca_1" class="metric-bar-fill temp"></div>
+                        </div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                            </svg>
+                            Humedad
+                        </div>
+                        <div class="metric-value hum"><span id="hum-finca_1">--</span></div>
+                        <div class="metric-unit">%</div>
+                        <div class="metric-bar">
+                            <div id="bar-hum-finca_1" class="metric-bar-fill hum"></div>
+                        </div>
+                    </div>
+                    <div id="metric-co2-finca_1" class="metric-box">
+                        <div class="metric-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M8 12h8" />
+                                <path d="M12 8v8" />
+                            </svg>
+                            CO₂
+                        </div>
+                        <div class="metric-value co2"><span id="co2-finca_1">--</span></div>
+                        <div class="metric-unit">ppm</div>
+                        <div class="metric-bar">
+                            <div id="bar-co2-finca_1" class="metric-bar-fill co2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span id="time-finca_1">Sin datos</span>
+                </div>
+            </div>
+
+            <!-- Finca 2 -->
+            <div id="card-finca_2" class="finca-card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="finca-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                <polyline points="9 22 9 12 15 12 15 22" />
+                            </svg>
+                        </div>
+                        <span class="finca-name">Finca 2</span>
+                    </div>
+                    <div id="badge-finca_2" class="alert-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                            <line x1="12" y1="9" x2="12" y2="13" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" />
+                        </svg>
+                        Alerta
+                    </div>
+                </div>
+                <div class="metrics-row">
+                    <div id="metric-temp-finca_2" class="metric-box">
+                        <div class="metric-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z" />
+                            </svg>
+                            Temp
+                        </div>
+                        <div class="metric-value temp"><span id="temp-finca_2">--</span></div>
+                        <div class="metric-unit">°C</div>
+                        <div class="metric-bar">
+                            <div id="bar-temp-finca_2" class="metric-bar-fill temp"></div>
+                        </div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                            </svg>
+                            Humedad
+                        </div>
+                        <div class="metric-value hum"><span id="hum-finca_2">--</span></div>
+                        <div class="metric-unit">%</div>
+                        <div class="metric-bar">
+                            <div id="bar-hum-finca_2" class="metric-bar-fill hum"></div>
+                        </div>
+                    </div>
+                    <div id="metric-co2-finca_2" class="metric-box">
+                        <div class="metric-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M8 12h8" />
+                                <path d="M12 8v8" />
+                            </svg>
+                            CO₂
+                        </div>
+                        <div class="metric-value co2"><span id="co2-finca_2">--</span></div>
+                        <div class="metric-unit">ppm</div>
+                        <div class="metric-bar">
+                            <div id="bar-co2-finca_2" class="metric-bar-fill co2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span id="time-finca_2">Sin datos</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ═══ History Section ═══ -->
+        <section class="history-section">
+            <div class="history-header">
+                <div class="history-header-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
+                    <div>
+                        <div class="history-title">Historial de Lecturas</div>
+                        <div class="history-subtitle">Últimos 50 registros por finca</div>
+                    </div>
+                </div>
+            </div>
+            <div class="history-columns">
+                <!-- Finca 1 History -->
+                <div class="history-column">
+                    <div class="column-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        </svg>
+                        Finca 1
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Temp °C</th>
+                                <th>Hum %</th>
+                                <th>CO₂ ppm</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-finca_1"></tbody>
+                    </table>
+                </div>
+                <!-- Finca 2 History -->
+                <div class="history-column">
+                    <div class="column-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        </svg>
+                        Finca 2
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Temp °C</th>
+                                <th>Hum %</th>
+                                <th>CO₂ ppm</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-finca_2"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
