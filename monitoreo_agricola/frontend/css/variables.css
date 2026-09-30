@@ -1,35 +1,71 @@
-/* Design System — Tokens (Bento Box Grid) */
+/* Design System — Rincón Verde Dark Agricultural */
 :root {
-    --bg-primary: #F5F5F7;
-    --bg-secondary: #EBEBEF;
-    --bg-card: #FFFFFF;
-    --bg-card-hover: #FFFFFF;
-    --bg-metric: #F9F9FB;
+    /* Background layers */
+    --bg-deep: #070f0b;
+    --bg-primary: #0a1a12;
+    --bg-secondary: #0f2118;
+    --bg-elevated: #132b1e;
+    --bg-card: rgba(16, 42, 28, 0.55);
+    --bg-card-hover: rgba(20, 52, 35, 0.65);
+    --bg-card-solid: #122a1d;
+    --bg-metric: rgba(12, 32, 22, 0.6);
 
-    --border-subtle: rgba(0, 0, 0, 0.06);
-    --border-active: rgba(0, 0, 0, 0.12);
+    /* Glass effect */
+    --glass-blur: blur(16px);
+    --glass-border: rgba(52, 199, 89, 0.12);
+    --glass-border-hover: rgba(52, 199, 89, 0.25);
+    --glass-shine: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.04) 0%,
+            rgba(255, 255, 255, 0) 50%);
 
-    --text-primary: #1D1D1F;
-    --text-secondary: #86868B;
-    --text-muted: #A1A1A6;
+    /* Borders */
+    --border-subtle: rgba(52, 199, 89, 0.08);
+    --border-active: rgba(52, 199, 89, 0.2);
 
+    /* Text */
+    --text-primary: #e8f5e9;
+    --text-secondary: #8fa89a;
+    --text-muted: #5a7a68;
+
+    /* Accent: Temperature (warm amber) */
+    --accent-temp: #e8a838;
+    --accent-temp-dim: rgba(232, 168, 56, 0.15);
+    --accent-temp-glow: rgba(232, 168, 56, 0.3);
+
+    /* Accent: Humidity (teal) */
+    --accent-hum: #2dd4bf;
+    --accent-hum-dim: rgba(45, 212, 191, 0.12);
+    --accent-hum-glow: rgba(45, 212, 191, 0.3);
+
+    /* Accent: CO₂ (lavender) */
+    --accent-co2: #a78bfa;
+    --accent-co2-dim: rgba(167, 139, 250, 0.12);
+    --accent-co2-glow: rgba(167, 139, 250, 0.3);
+
+    /* Accent: Green (brand) */
     --accent-green: #34C759;
-    --accent-green-dim: rgba(52, 199, 89, 0.15);
-    --accent-purple: #AF52DE;
-    --accent-purple-dim: rgba(175, 82, 222, 0.15);
-    --accent-blue: #007AFF;
-    --accent-blue-dim: rgba(0, 122, 255, 0.15);
-    --accent-slate: #8E8E93;
-    --accent-slate-dim: rgba(142, 142, 147, 0.15);
+    --accent-green-dim: rgba(52, 199, 89, 0.12);
+    --accent-green-glow: rgba(52, 199, 89, 0.35);
 
-    --alert-red: #FF3B30;
-    --alert-red-dim: rgba(255, 59, 48, 0.12);
-    --alert-red-glow: rgba(255, 59, 48, 0.35);
+    /* Alert */
+    --alert-red: #ff6b6b;
+    --alert-red-dim: rgba(255, 107, 107, 0.12);
+    --alert-red-glow: rgba(255, 107, 107, 0.3);
 
+    /* Radii */
     --radius-sm: 12px;
     --radius-md: 16px;
     --radius-lg: 24px;
 
-    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.04);
-    --shadow-glow-green: 0 0 30px rgba(52, 199, 89, 0.12);
+    /* Shadows */
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.2);
+    --shadow-card-hover: 0 12px 48px rgba(0, 0, 0, 0.4),
+        0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-glow-green: 0 0 40px rgba(52, 199, 89, 0.15);
+
+    /* Gauge */
+    --gauge-size: 110px;
+    --gauge-track: rgba(255, 255, 255, 0.06);
+    --gauge-stroke: 8;
 }

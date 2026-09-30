@@ -3,6 +3,21 @@ import { formatearHora, pct } from './utils.js';
 
 const ultimasAlertas = {};
 
+// SVG gauge circumference for r=50: 2 * π * 50 ≈ 314.16
+const CIRCUMFERENCE = 314.16;
+
+/**
+ * Set the gauge arc fill by computing the stroke-dashoffset
+ * from a percentage (0-100).
+ */
+function setGauge(elementId, percentage) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const clamped = Math.max(0, Math.min(100, percentage));
+    const offset = CIRCUMFERENCE - (clamped / 100) * CIRCUMFERENCE;
+    el.style.strokeDashoffset = offset;
+}
+
 export function mostrarToast(mensaje) {
     const container = document.getElementById("toast-container");
 
@@ -43,9 +58,18 @@ export function actualizarTarjeta(datos) {
 
     document.getElementById(`time-${id}`).textContent = formatearHora(datos.timestamp);
 
-    document.getElementById(`bar-temp-${id}`).style.width = pct(datos.temperatura, 15, 40) + "%";
-    document.getElementById(`bar-hum-${id}`).style.width = pct(datos.humedad, 0, 100) + "%";
-    document.getElementById(`bar-co2-${id}`).style.width = pct(datos.co2, 300, 1200) + "%";
+    // Update SVG gauge arcs
+    setGauge(`gauge-temp-${id}`, pct(datos.temperatura, 15, 40));
+    setGauge(`gauge-hum-${id}`, pct(datos.humedad, 0, 100));
+    setGauge(`gauge-co2-${id}`, pct(datos.co2, 300, 1200));
+
+    // Keep legacy bars working if present
+    const barTemp = document.getElementById(`bar-temp-${id}`);
+    const barHum = document.getElementById(`bar-hum-${id}`);
+    const barCo2 = document.getElementById(`bar-co2-${id}`);
+    if (barTemp) barTemp.style.width = pct(datos.temperatura, 15, 40) + "%";
+    if (barHum) barHum.style.width = pct(datos.humedad, 0, 100) + "%";
+    if (barCo2) barCo2.style.width = pct(datos.co2, 300, 1200) + "%";
 
     const tempMetric = document.getElementById(`metric-temp-${id}`);
     const co2Metric = document.getElementById(`metric-co2-${id}`);

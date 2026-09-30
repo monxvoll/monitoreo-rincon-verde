@@ -20,7 +20,7 @@
 
     <div class="app-container">
 
-        <!-- ═══ Header ═══ -->
+        <!-- Header -->
         <header class="header">
             <div class="header-brand">
                 <div class="brand-icon">
@@ -46,7 +46,7 @@
             </div>
         </header>
 
-        <!-- ═══ Finca Cards ═══ -->
+        <!-- Finca Cards -->
         <section class="fincas-grid">
 
             <!-- Finca 1 -->
@@ -74,6 +74,7 @@
                     </div>
                 </div>
                 <div class="metrics-row">
+                    <!-- Temperature Gauge -->
                     <div id="metric-temp-finca_1" class="metric-box">
                         <div class="metric-label">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -81,12 +82,19 @@
                             </svg>
                             Temp
                         </div>
-                        <div class="metric-value temp"><span id="temp-finca_1">--</span></div>
-                        <div class="metric-unit">°C</div>
-                        <div class="metric-bar">
-                            <div id="bar-temp-finca_1" class="metric-bar-fill temp"></div>
+                        <div class="gauge-container">
+                            <svg class="gauge-svg" viewBox="0 0 120 120">
+                                <circle class="gauge-track" cx="60" cy="60" r="50" />
+                                <circle id="gauge-temp-finca_1" class="gauge-fill temp" cx="60" cy="60" r="50"
+                                    stroke-dasharray="314.16" stroke-dashoffset="314.16" />
+                            </svg>
+                            <div class="gauge-value">
+                                <div class="metric-value temp"><span id="temp-finca_1">--</span></div>
+                                <div class="metric-unit">°C</div>
+                            </div>
                         </div>
                     </div>
+                    <!-- Humidity Gauge -->
                     <div class="metric-box">
                         <div class="metric-label">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -94,12 +102,19 @@
                             </svg>
                             Humedad
                         </div>
-                        <div class="metric-value hum"><span id="hum-finca_1">--</span></div>
-                        <div class="metric-unit">%</div>
-                        <div class="metric-bar">
-                            <div id="bar-hum-finca_1" class="metric-bar-fill hum"></div>
+                        <div class="gauge-container">
+                            <svg class="gauge-svg" viewBox="0 0 120 120">
+                                <circle class="gauge-track" cx="60" cy="60" r="50" />
+                                <circle id="gauge-hum-finca_1" class="gauge-fill hum" cx="60" cy="60" r="50"
+                                    stroke-dasharray="314.16" stroke-dashoffset="314.16" />
+                            </svg>
+                            <div class="gauge-value">
+                                <div class="metric-value hum"><span id="hum-finca_1">--</span></div>
+                                <div class="metric-unit">%</div>
+                            </div>
                         </div>
                     </div>
+                    <!-- CO₂ Gauge -->
                     <div id="metric-co2-finca_1" class="metric-box">
                         <div class="metric-label">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -109,10 +124,16 @@
                             </svg>
                             CO₂
                         </div>
-                        <div class="metric-value co2"><span id="co2-finca_1">--</span></div>
-                        <div class="metric-unit">ppm</div>
-                        <div class="metric-bar">
-                            <div id="bar-co2-finca_1" class="metric-bar-fill co2"></div>
+                        <div class="gauge-container">
+                            <svg class="gauge-svg" viewBox="0 0 120 120">
+                                <circle class="gauge-track" cx="60" cy="60" r="50" />
+                                <circle id="gauge-co2-finca_1" class="gauge-fill co2" cx="60" cy="60" r="50"
+                                    stroke-dasharray="314.16" stroke-dashoffset="314.16" />
+                            </svg>
+                            <div class="gauge-value">
+                                <div class="metric-value co2"><span id="co2-finca_1">--</span></div>
+                                <div class="metric-unit">ppm</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -150,6 +171,7 @@
                     </div>
                 </div>
                 <div class="metrics-row">
+                    <!-- Temperature Gauge -->
                     <div id="metric-temp-finca_2" class="metric-box">
                         <div class="metric-label">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -157,12 +179,19 @@
                             </svg>
                             Temp
                         </div>
-                        <div class="metric-value temp"><span id="temp-finca_2">--</span></div>
-                        <div class="metric-unit">°C</div>
-                        <div class="metric-bar">
-                            <div id="bar-temp-finca_2" class="metric-bar-fill temp"></div>
+                        <div class="gauge-container">
+                            <svg class="gauge-svg" viewBox="0 0 120 120">
+                                <circle class="gauge-track" cx="60" cy="60" r="50" />
+                                <circle id="gauge-temp-finca_2" class="gauge-fill temp" cx="60" cy="60" r="50"
+                                    stroke-dasharray="314.16" stroke-dashoffset="314.16" />
+                            </svg>
+                            <div class="gauge-value">
+                                <div class="metric-value temp"><span id="temp-finca_2">--</span></div>
+                                <div class="metric-unit">°C</div>
+                            </div>
                         </div>
                     </div>
+                    <!-- Humidity Gauge -->
                     <div class="metric-box">
                         <div class="metric-label">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -170,12 +199,19 @@
                             </svg>
                             Humedad
                         </div>
-                        <div class="metric-value hum"><span id="hum-finca_2">--</span></div>
-                        <div class="metric-unit">%</div>
-                        <div class="metric-bar">
-                            <div id="bar-hum-finca_2" class="metric-bar-fill hum"></div>
+                        <div class="gauge-container">
+                            <svg class="gauge-svg" viewBox="0 0 120 120">
+                                <circle class="gauge-track" cx="60" cy="60" r="50" />
+                                <circle id="gauge-hum-finca_2" class="gauge-fill hum" cx="60" cy="60" r="50"
+                                    stroke-dasharray="314.16" stroke-dashoffset="314.16" />
+                            </svg>
+                            <div class="gauge-value">
+                                <div class="metric-value hum"><span id="hum-finca_2">--</span></div>
+                                <div class="metric-unit">%</div>
+                            </div>
                         </div>
                     </div>
+                    <!-- CO₂ Gauge -->
                     <div id="metric-co2-finca_2" class="metric-box">
                         <div class="metric-label">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -185,10 +221,16 @@
                             </svg>
                             CO₂
                         </div>
-                        <div class="metric-value co2"><span id="co2-finca_2">--</span></div>
-                        <div class="metric-unit">ppm</div>
-                        <div class="metric-bar">
-                            <div id="bar-co2-finca_2" class="metric-bar-fill co2"></div>
+                        <div class="gauge-container">
+                            <svg class="gauge-svg" viewBox="0 0 120 120">
+                                <circle class="gauge-track" cx="60" cy="60" r="50" />
+                                <circle id="gauge-co2-finca_2" class="gauge-fill co2" cx="60" cy="60" r="50"
+                                    stroke-dasharray="314.16" stroke-dashoffset="314.16" />
+                            </svg>
+                            <div class="gauge-value">
+                                <div class="metric-value co2"><span id="co2-finca_2">--</span></div>
+                                <div class="metric-unit">ppm</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -203,7 +245,7 @@
 
         </section>
 
-        <!-- ═══ History Section ═══ -->
+        <!-- History Section -->
         <section class="history-section">
             <div class="history-header">
                 <div class="history-header-left">
