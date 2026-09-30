@@ -1,11 +1,13 @@
 import time
 import json
 import random
+import os
 import redis
 from datetime import datetime
 
 # Configuracion de Redis
-r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+r = redis.Redis(host=REDIS_HOST, port=6379, db=0, decode_responses=True)
 
 # Identificadores de las dos fincas
 FINCAS = ["finca_1", "finca_2"]

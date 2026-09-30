@@ -2,6 +2,7 @@ import json
 import asyncio
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+import os
 import redis.asyncio as redis
 
 app = FastAPI(title="API Monitoreo Agricola Rincon Verde")
@@ -16,7 +17,8 @@ app.add_middleware(
 )
 
 # Conexion asincrona a Redis
-redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+redis_client = redis.Redis(host=REDIS_HOST, port=6379, db=0, decode_responses=True)
 
 # Umbrales criticos para generar alertas
 UMBRAL_TEMPERATURA = 30.0  # grados Celsius

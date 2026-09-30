@@ -8,33 +8,52 @@ Sistema de monitoreo en tiempo real para dos fincas agricolas. Mide temperatura,
 - **Base de datos**: Redis (en memoria)
 - **Backend**: FastAPI + Uvicorn
 - **Frontend**: HTML5 + CSS + JavaScript vanilla
+- **Contenedores**: Docker + Docker Compose
 
 ## Requisitos
 
+- Docker y Docker Compose (recomendado)
+O para ejecucion local pura:
 - Python 3.10+
-- Redis (local o Docker)
+- Redis local
 - pip
 
-## Instalacion
+## Ejecucion con Docker (Recomendado)
+
+La forma mas rapida de levantar todo el proyecto es mediante Docker Compose.
+
+1. Asegurate de tener Docker en ejecucion.
+2. Abre una terminal en la raiz del proyecto y ejecuta:
 
 ```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+docker compose up -d --build
 ```
 
-## Ejecucion
+Esto levantara:
+- El servidor de Redis
+- El Backend (FastAPI) en el puerto `8000`
+- El Frontend (Nginx/Servidor estatico) en el puerto `8080` (o el puerto configurado)
+- El Simulador de sensores en segundo plano
 
-Necesitas 3 terminales y Redis corriendo.
+Para detener todos los servicios:
+```bash
+docker compose down
+```
 
-**Redis con Docker:**
+## Ejecucion Manual (Sin Docker)
+
+Si prefieres ejecutar el sistema sin Docker, abre 3 terminales y asegurate de tener Redis corriendo en el puerto 6379.
+
+**Redis con Docker (solo para la base de datos):**
 ```bash
 docker run -d --name redis-server -p 6379:6379 redis
 ```
 
 **Terminal 1 - Backend:**
 ```bash
+python -m venv venv
 source venv/bin/activate
+pip install -r requirements.txt
 uvicorn backend.main:app --reload --port 8000
 ```
 
@@ -56,12 +75,15 @@ Abrir en el navegador: `http://localhost:8080`
 
 ```
 monitoreo_agricola/
+├── docker-compose.yml      # Configuracion de servicios Docker
+├── Dockerfile              # Construccion de la imagen base de Python
 ├── sensor_mock.py          # Simulador de sensores
 ├── backend/
 │   └── main.py             # API REST + WebSocket
 ├── frontend/
 │   ├── index.html          # Panel de control
-│   └── main.js             # Logica del cliente
+│   └── js/
+│       └── ui.js           # Logica del cliente
 ├── requirements.txt
 └── .gitignore
 ```
