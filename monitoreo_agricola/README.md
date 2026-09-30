@@ -12,64 +12,28 @@ Sistema de monitoreo en tiempo real para dos fincas agricolas. Mide temperatura,
 
 ## Requisitos
 
-- Docker y Docker Compose (recomendado)
-O para ejecucion local pura:
-- Python 3.10+
-- Redis local
-- pip
+- Docker y Docker Compose
+## Ejecución
 
-## Ejecucion con Docker (Recomendado)
+El proyecto se debe iniciar utilizando Docker Compose.
 
-La forma mas rapida de levantar todo el proyecto es mediante Docker Compose.
-
-1. Asegurate de tener Docker en ejecucion.
-2. Abre una terminal en la raiz del proyecto y ejecuta:
+1. Es necesario tener Docker en ejecución.
+2. Desde una terminal en la raíz del proyecto, ejecutar el siguiente comando:
 
 ```bash
 docker compose up -d --build
 ```
 
-Esto levantara:
+Este comando iniciará:
 - El servidor de Redis
 - El Backend (FastAPI) en el puerto `8000`
-- El Frontend (Nginx/Servidor estatico) en el puerto `8080` (o el puerto configurado)
+- El Frontend (Nginx/Servidor estático) en el puerto `8080`
 - El Simulador de sensores en segundo plano
 
-Para detener todos los servicios:
+Para detener todos los servicios, ejecutar:
 ```bash
 docker compose down
 ```
-
-## Ejecucion Manual (Sin Docker)
-
-Si prefieres ejecutar el sistema sin Docker, abre 3 terminales y asegurate de tener Redis corriendo en el puerto 6379.
-
-**Redis con Docker (solo para la base de datos):**
-```bash
-docker run -d --name redis-server -p 6379:6379 redis
-```
-
-**Terminal 1 - Backend:**
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn backend.main:app --reload --port 8000
-```
-
-**Terminal 2 - Simulador:**
-```bash
-source venv/bin/activate
-python sensor_mock.py
-```
-
-**Terminal 3 - Frontend:**
-```bash
-cd frontend
-python -m http.server 8080
-```
-
-Abrir en el navegador: `http://localhost:8080`
 
 ## Estructura
 
