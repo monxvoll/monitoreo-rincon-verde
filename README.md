@@ -22,3 +22,10 @@ Para detener todos los servicios, ejecutar:
 ```bash
 docker compose down
 ```
+
+## Endpoints
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/api/historial/{finca}` | Historial reciente de una finca |
+| WS | `/ws/monitoreo` | Datos en tiempo real vía WebSocket |
