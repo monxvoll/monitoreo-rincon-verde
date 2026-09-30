@@ -67,10 +67,10 @@ export function actualizarTarjeta(datos) {
         // Solo mostrar una alerta cada INTERVALO_ALERTAS_MS para no saturar la UI
         if (ahora - ultimaAlerta >= INTERVALO_ALERTAS_MS) {
             const reasons = [];
-            if (datos.temperatura > UMBRAL_TEMP) reasons.push(`Temp ${datos.temperatura}C`);
-            if (datos.co2 > UMBRAL_CO2) reasons.push(`CO2 ${datos.co2} ppm`);
+            if (datos.temperatura > UMBRAL_TEMP) reasons.push(`el nivel de temperatura es anormalmente alto (${datos.temperatura}°C)`);
+            if (datos.co2 > UMBRAL_CO2) reasons.push(`el nivel de CO₂ es demasiado elevado (${datos.co2} ppm)`);
             const fincaLabel = id === "finca_1" ? "Finca 1" : "Finca 2";
-            mostrarToast(`${fincaLabel}: ${reasons.join(" - ")}`);
+            mostrarToast(`<strong>Alerta en ${fincaLabel}:</strong> ${reasons.join(" y ")}.`);
             
             ultimasAlertas[id] = ahora;
         }
@@ -81,17 +81,17 @@ export function agregarFilaTabla(datos, prepend = true) {
     const id = datos.finca_id;
     const tbody = document.getElementById(`table-${id}`);
 
-    const isAlert = datos.temperatura > UMBRAL_TEMP || datos.co2 > UMBRAL_CO2;
+    const tempAlert = datos.temperatura > UMBRAL_TEMP;
+    const co2Alert = datos.co2 > UMBRAL_CO2;
 
     const tr = document.createElement("tr");
-    tr.className = isAlert ? "row-alert" : "";
     if (prepend) tr.classList.add("row-new");
 
     tr.innerHTML = `
         <td>${formatearHora(datos.timestamp)}</td>
-        <td>${datos.temperatura}</td>
+        <td class="${tempAlert ? 'cell-alert' : ''}" ${tempAlert ? 'aria-invalid="true"' : ''}>${datos.temperatura}</td>
         <td>${datos.humedad}</td>
-        <td>${datos.co2}</td>
+        <td class="${co2Alert ? 'cell-alert' : ''}" ${co2Alert ? 'aria-invalid="true"' : ''}>${datos.co2}</td>
     `;
 
     if (prepend) {

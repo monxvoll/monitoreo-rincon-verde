@@ -17,12 +17,12 @@
 .brand-icon {
     width: 42px;
     height: 42px;
-    background: linear-gradient(135deg, #34d399, #059669);
+    background: var(--text-primary);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 16px rgba(52, 211, 153, 0.25);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .brand-icon svg {
@@ -34,10 +34,7 @@
 .brand-title {
     font-size: 1.5rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #34d399, #6ee7b7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text-primary);
     letter-spacing: -0.03em;
 }
 
@@ -62,9 +59,9 @@
 }
 
 .connection-badge.offline {
-    background: rgba(239, 68, 68, 0.1);
-    color: #fca5a5;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    background: var(--alert-red-dim);
+    color: var(--alert-red);
+    border: 1px solid var(--alert-red-dim);
 }
 
 .connection-badge.online {

@@ -1,35 +1,35 @@
-/* Design System — Tokens */
+/* Design System — Tokens (Bento Box Grid) */
 :root {
-    --bg-primary: #0b1120;
-    --bg-secondary: #111827;
-    --bg-card: #1a2235;
-    --bg-card-hover: #1f2a3f;
-    --bg-metric: #0f1729;
+    --bg-primary: #F5F5F7;
+    --bg-secondary: #EBEBEF;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #FFFFFF;
+    --bg-metric: #F9F9FB;
 
-    --border-subtle: rgba(148, 163, 184, 0.08);
-    --border-active: rgba(52, 211, 153, 0.3);
+    --border-subtle: rgba(0, 0, 0, 0.06);
+    --border-active: rgba(0, 0, 0, 0.12);
 
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
+    --text-primary: #1D1D1F;
+    --text-secondary: #86868B;
+    --text-muted: #A1A1A6;
 
-    --accent-green: #34d399;
-    --accent-green-dim: rgba(52, 211, 153, 0.15);
-    --accent-orange: #fb923c;
-    --accent-orange-dim: rgba(251, 146, 60, 0.15);
-    --accent-blue: #60a5fa;
-    --accent-blue-dim: rgba(96, 165, 250, 0.15);
-    --accent-slate: #cbd5e1;
-    --accent-slate-dim: rgba(203, 213, 225, 0.1);
+    --accent-green: #34C759;
+    --accent-green-dim: rgba(52, 199, 89, 0.15);
+    --accent-purple: #AF52DE;
+    --accent-purple-dim: rgba(175, 82, 222, 0.15);
+    --accent-blue: #007AFF;
+    --accent-blue-dim: rgba(0, 122, 255, 0.15);
+    --accent-slate: #8E8E93;
+    --accent-slate-dim: rgba(142, 142, 147, 0.15);
 
-    --alert-red: #ef4444;
-    --alert-red-dim: rgba(239, 68, 68, 0.12);
-    --alert-red-glow: rgba(239, 68, 68, 0.35);
+    --alert-red: #FF3B30;
+    --alert-red-dim: rgba(255, 59, 48, 0.12);
+    --alert-red-glow: rgba(255, 59, 48, 0.35);
 
-    --radius-sm: 8px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
 
-    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.25);
-    --shadow-glow-green: 0 0 30px rgba(52, 211, 153, 0.08);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.04);
+    --shadow-glow-green: 0 0 30px rgba(52, 199, 89, 0.12);
 }

@@ -34,13 +34,15 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="brand-title">Rincón Verde</div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="brand-title">Rincón Verde</div>
+                        <div id="ws-badge" class="connection-badge offline">
+                            <span class="status-dot"></span>
+                            <span id="ws-status-text">Desconectado</span>
+                        </div>
+                    </div>
                     <div class="brand-subtitle">Monitoreo Agrícola en Tiempo Real</div>
                 </div>
-            </div>
-            <div id="ws-badge" class="connection-badge offline">
-                <span class="status-dot"></span>
-                <span id="ws-status-text">Desconectado</span>
             </div>
         </header>
 

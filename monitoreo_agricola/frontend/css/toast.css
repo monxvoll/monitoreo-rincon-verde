@@ -19,15 +19,22 @@
     font-size: 0.8rem;
     font-weight: 600;
     pointer-events: auto;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-card);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
     animation: toast-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     max-width: 380px;
 }
 
 .toast.alert {
-    background: linear-gradient(135deg, #991b1b, #7f1d1d);
-    color: #fecaca;
-    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--alert-red);
+}
+
+.toast.alert svg {
+    color: var(--alert-red);
 }
 
 .toast svg {

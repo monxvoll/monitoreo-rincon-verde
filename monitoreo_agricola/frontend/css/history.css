@@ -81,7 +81,7 @@
 }
 
 .history-column::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.15);
+    background: var(--border-subtle);
     border-radius: 4px;
 }
 
@@ -132,12 +132,12 @@ thead th {
 }
 
 tbody tr {
-    border-bottom: 1px solid rgba(148, 163, 184, 0.04);
+    border-bottom: 1px solid var(--bg-secondary);
     transition: background 0.2s ease;
 }
 
 tbody tr:hover {
-    background: rgba(148, 163, 184, 0.04);
+    background: var(--bg-secondary);
 }
 
 tbody td {
@@ -147,10 +147,7 @@ tbody td {
     font-variant-numeric: tabular-nums;
 }
 
-tbody tr.row-alert td {
-    color: #fca5a5;
-}
-
-tbody tr.row-alert {
-    background: var(--alert-red-dim);
+tbody td.cell-alert {
+    color: var(--alert-red);
+    font-weight: 700;
 }
