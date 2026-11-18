@@ -1,0 +1,101 @@
+/* Vista técnica: usa la base de granjero.css y agrega piezas más densas
+   (métricas, tablas compactas, consola de mensajes, flujo de comandos). */
+
+code, .mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.82em;
+}
+.nota code, .flujo code, .tabla code {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--superficie-2);
+    border: 1px solid var(--borde);
+    color: var(--marca-oscura);
+}
+
+/* Métricas */
+.metricas { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.metrica { padding: 14px 16px; }
+.metrica-titulo { color: var(--texto-2); font-size: 0.8rem; font-weight: 600; }
+.metrica-valor { margin-top: 4px; font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.metrica-valor small { font-size: 0.9rem; font-weight: 600; color: var(--texto-3); margin-left: 2px; letter-spacing: 0; }
+.metrica-sub { margin-top: 2px; font-size: 0.76rem; color: var(--texto-3); }
+
+/* Cabeceras con control a la derecha */
+.bloque-cabecera { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.controles { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.selector {
+    padding: 8px 32px 8px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: var(--superficie) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f676d' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 14px;
+    color: var(--texto);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    appearance: none;
+    cursor: pointer;
+}
+.selector:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+
+/* Tablas compactas */
+.tabla-compacta { font-size: 0.85rem; }
+.tabla-compacta td { padding: 9px 12px; }
+.tabla-alta { max-height: 460px; overflow-y: auto; }
+.tabla-alta thead th { position: sticky; top: 0; z-index: 1; }
+.tabla .tipo-finca { display: inline-flex; align-items: center; gap: 6px; color: var(--texto-2); }
+.tabla .tipo-finca svg { width: 22px; height: 22px; flex-shrink: 0; }
+.tabla .tipo-finca small { font-size: 0.75rem; color: var(--texto-3); }
+.tabla .alerta-si { color: var(--actuar); font-weight: 700; }
+.tabla .alerta-no { color: var(--texto-3); }
+.tipo-clave { display: inline-block; padding: 1px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+.tipo-clave[data-tipo="string"] { background: #e7eefb; color: #2f5fb3; }
+.tipo-clave[data-tipo="list"] { background: #f1e9fb; color: #7445b0; }
+.tipo-clave[data-tipo="channel"] { background: var(--acento-suave); color: #b4611f; }
+
+/* Consola de mensajes */
+.consola {
+    margin-top: 12px;
+    height: 330px;
+    overflow-y: auto;
+    padding: 10px 12px;
+    border-radius: var(--radio-sm);
+    background: #14201f;
+    color: #d6e4e2;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    line-height: 1.55;
+}
+.consola li { padding: 3px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); overflow-wrap: anywhere; }
+.consola .c-hora { color: #7f9a96; }
+.consola .c-finca { color: #8fd3c8; font-weight: 600; }
+.consola .c-num { color: #f2c38f; }
+.consola .c-alerta { color: #ff8f84; font-weight: 600; }
+.consola .c-ok { color: #8fdca4; }
+.consola li.nuevo { animation: destello 1.2s ease-out; }
+@keyframes destello { from { background: rgba(143, 211, 200, 0.18); } to { background: transparent; } }
+
+/* Flujo de comandos */
+.flujo { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+.flujo li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; }
+.flujo strong { display: block; font-size: 0.9rem; margin-bottom: 4px; }
+.flujo code { display: inline-block; margin: 2px 4px 2px 0; }
+.paso {
+    display: grid; place-items: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--marca); color: #fff;
+    font-size: 0.8rem; font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .consola li.nuevo { animation: none; }
+}
+
+@media (max-width: 900px) {
+    .metricas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+    .metrica-valor { font-size: 1.6rem; }
+    .consola { height: 260px; }
+}

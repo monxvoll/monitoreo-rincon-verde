@@ -1,0 +1,398 @@
+/* Vistas del granjero (inicio y página de cada finca)
+   Tarjetas blancas, números grandes, píldoras redondeadas.
+   Marca: verde azulado. Acento: naranja. Los colores de estado solo indican cómo está la finca. */
+
+:root {
+    --fondo: #f4f5f7;
+    --superficie: #ffffff;
+    --superficie-2: #f8f9fa;
+    --borde: #e6e8ec;
+    --borde-fuerte: #d5d9df;
+    --texto: #1b2124;
+    --texto-2: #5f676d;
+    --texto-3: #8a9197;
+
+    --marca: #0f5f5a;
+    --marca-oscura: #0b4844;
+    --marca-suave: #e3f0ee;
+    --acento: #e5853a;
+    --acento-suave: #fdf0e5;
+
+    --bien: #23804a;
+    --bien-suave: #e3f4e9;
+    --atencion: #a35b00;
+    --atencion-suave: #fdf1df;
+    --actuar: #c0392b;
+    --actuar-suave: #fce7e4;
+    --sin_senal: #646a70;
+    --sin_senal-suave: #eceef0;
+
+    --radio: 14px;
+    --radio-sm: 10px;
+    --sombra: 0 1px 2px rgba(16, 24, 32, 0.04), 0 2px 8px rgba(16, 24, 32, 0.04);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--texto);
+    background: var(--fondo);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; }
+button { font: inherit; }
+
+.nota { color: var(--texto-2); font-size: 0.88rem; }
+.oculto { display: none !important; }
+
+/* Colores por nivel: cualquier elemento con data-nivel toma su color */
+[data-nivel="bien"] { --c: var(--bien); --c-suave: var(--bien-suave); }
+[data-nivel="atencion"] { --c: var(--atencion); --c-suave: var(--atencion-suave); }
+[data-nivel="actuar"] { --c: var(--actuar); --c-suave: var(--actuar-suave); }
+[data-nivel="sin_senal"],
+[data-nivel="cargando"] { --c: var(--sin_senal); --c-suave: var(--sin_senal-suave); }
+
+/* ---------- Píldoras y botones ---------- */
+.pildora {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--c-suave, var(--superficie-2));
+    color: var(--c, var(--texto-2));
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.pildora::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+.etiqueta {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    background: var(--superficie);
+    color: var(--texto-2);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.boton {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--marca);
+    background: var(--superficie);
+    color: var(--marca);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+.boton:hover { background: var(--marca-suave); }
+.boton.lleno { background: var(--marca); color: #fff; }
+.boton.lleno:hover { background: var(--marca-oscura); }
+.boton.acento { border-color: var(--acento); color: var(--acento); }
+.boton.acento:hover { background: var(--acento-suave); }
+.boton.acento.lleno { background: var(--acento); color: #fff; }
+.boton.acento.lleno:hover { background: #cf7330; }
+.boton:focus-visible, .chip-filtro:focus-visible, .grupo-pildoras button:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+
+.tarjeta {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+}
+
+/* ---------- Barra superior ---------- */
+.barra-superior {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px 20px;
+    flex-wrap: wrap;
+    padding: 12px 28px;
+    background: var(--superficie);
+    border-bottom: 1px solid var(--borde);
+}
+.marca { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.marca-icono { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: var(--marca); }
+.marca-icono svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.marca-nombre { display: block; font-size: 1.1rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; }
+.marca-sub { display: block; font-size: 0.78rem; color: var(--texto-2); }
+
+.barra-derecha { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.conexion { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--texto-2); }
+.conexion-punto { width: 9px; height: 9px; border-radius: 50%; background: var(--texto-3); }
+.conexion[data-estado="en_vivo"] .conexion-punto { background: var(--bien); box-shadow: 0 0 0 3px var(--bien-suave); }
+.conexion[data-estado="reconectando"] .conexion-punto { background: var(--actuar); }
+.enlace-discreto { font-size: 0.85rem; color: var(--texto-2); text-underline-offset: 3px; }
+
+/* ---------- Página ---------- */
+.pagina { max-width: 1240px; margin: 0 auto; padding: 28px; display: flex; flex-direction: column; gap: 28px; }
+
+.cabecera-seccion { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.cabecera-seccion h2 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+.cabecera-seccion p { color: var(--texto-2); font-size: 0.9rem; }
+
+/* ---------- Saludo ---------- */
+.saludo { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.saludo h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+.saludo p { margin-top: 4px; color: var(--texto-2); font-size: 1rem; }
+.saludo p strong { color: var(--c, var(--texto)); }
+.chip-fecha {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 9px 14px;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-sm);
+    font-size: 0.9rem;
+}
+.chip-fecha svg { width: 18px; height: 18px; fill: none; stroke: var(--texto-2); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Conteos (inicio) ---------- */
+.conteos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.conteo { padding: 16px 18px; }
+.conteo-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--texto-2); font-size: 0.85rem; font-weight: 600; }
+.conteo-cabecera::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.conteo-numero { margin-top: 6px; font-size: 2.4rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+.conteo-numero small { font-size: 1rem; font-weight: 600; color: var(--texto-3); letter-spacing: 0; }
+.conteo-texto { margin-top: 2px; font-size: 0.82rem; color: var(--texto-2); }
+.conteo[data-activo="no"] .conteo-numero { color: var(--texto-3); }
+
+/* ---------- Filtro por tipo ---------- */
+.filtros { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip-filtro {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--texto-2);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.chip-filtro svg { width: 18px; height: 18px; }
+.chip-filtro span { color: var(--texto-3); }
+.chip-filtro[aria-pressed="true"] { background: var(--marca); border-color: var(--marca); color: #fff; --trazo: #fff; }
+.chip-filtro[aria-pressed="true"] span { color: rgba(255, 255, 255, 0.75); }
+
+/* ---------- Íconos de tipo de finca ---------- */
+.icono-tipo { fill: none; stroke: var(--trazo, var(--marca)); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icono-caja { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; background: var(--marca-suave); }
+.icono-caja svg { width: 28px; height: 28px; }
+
+/* ---------- Columnas inicio ---------- */
+.columnas { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 28px; align-items: start; }
+
+/* ---------- Tarjetas de finca (inicio) ---------- */
+.fincas { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+.tarjeta-finca { position: relative; display: flex; flex-direction: column; gap: 14px; padding: 20px 18px 16px; overflow: hidden; }
+.tarjeta-finca::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--c); }
+.tarjeta-finca-titulo { display: flex; align-items: center; gap: 12px; }
+.tarjeta-finca h3 { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; }
+.tarjeta-finca h3 a { text-decoration: none; }
+.tarjeta-finca h3 a::after { content: ""; position: absolute; inset: 0; } /* toda la tarjeta abre la finca */
+.tarjeta-finca .detalle { font-size: 0.8rem; color: var(--texto-2); }
+
+.mensaje-estado {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--radio-sm);
+    background: var(--c-suave);
+    color: var(--c);
+    font-size: 1.1rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+.mensaje-estado svg { width: 24px; height: 24px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.indicadores { display: flex; flex-direction: column; gap: 6px; }
+.indicador { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 0.9rem; }
+.indicador-nombre { display: flex; align-items: center; gap: 8px; color: var(--texto-2); }
+.indicador-nombre svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.indicador-estado { display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--c); }
+.marca-estado { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--c-suave); }
+.marca-estado svg { width: 12px; height: 12px; fill: none; stroke: var(--c); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+.tarjeta-finca-pie {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin-top: auto; padding-top: 12px;
+    border-top: 1px solid var(--borde);
+    font-size: 0.8rem; color: var(--texto-3);
+}
+.tarjeta-finca-pie .boton { position: relative; z-index: 1; padding: 6px 14px; font-size: 0.8rem; }
+.tarjeta-finca:hover { border-color: var(--borde-fuerte); box-shadow: 0 4px 16px rgba(16, 24, 32, 0.08); }
+.tarjeta-finca:focus-within { outline: 3px solid var(--acento); outline-offset: 2px; }
+.tarjeta-finca[data-nivel="sin_senal"] .indicadores { opacity: 0.5; }
+
+/* ---------- Panel de avisos ---------- */
+.avisos { position: sticky; top: 16px; padding: 18px; }
+.avisos h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 12px; }
+.lista-avisos { display: flex; flex-direction: column; gap: 8px; }
+.aviso { padding: 12px 12px 12px 14px; border-left: 4px solid var(--c); background: var(--c-suave); border-radius: 8px; }
+.aviso-titulo { font-weight: 800; font-size: 0.95rem; }
+.aviso-titulo a { text-decoration: none; }
+.aviso-titulo a:hover { text-decoration: underline; }
+.aviso-titulo span { color: var(--c); }
+.aviso p { font-size: 0.88rem; margin-top: 3px; }
+.aviso small { display: block; margin-top: 4px; color: var(--texto-2); font-size: 0.78rem; }
+.aviso-acciones { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.aviso-acciones .boton { padding: 5px 12px; font-size: 0.78rem; }
+.aviso.hecho { --c: var(--borde-fuerte); --c-suave: var(--superficie-2); }
+.aviso.hecho .aviso-titulo span { color: var(--texto-2); }
+.marca-hecho { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; font-weight: 700; color: var(--bien); }
+.marca-hecho svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.tarea.principal .marca-hecho { color: #fff; }
+.bloque-resueltos { margin-top: 16px; }
+.bloque-resueltos summary { cursor: pointer; font-weight: 700; font-size: 0.9rem; color: var(--texto-2); padding: 4px 0; }
+.bloque-resueltos[open] summary { margin-bottom: 8px; }
+.resueltos .aviso { --c: var(--borde-fuerte); --c-suave: var(--superficie-2); color: var(--texto-2); }
+.resueltos .aviso-titulo span { color: var(--texto-2); }
+.vacio { color: var(--texto-2); font-size: 0.9rem; padding: 4px 0; }
+
+/* ---------- Ayuda ---------- */
+.ayuda { padding: 22px 24px; }
+.ayuda h2 { font-size: 1.15rem; font-weight: 800; }
+.leyenda { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px 20px; margin-top: 12px; }
+.leyenda li { position: relative; padding-left: 22px; font-size: 0.9rem; color: var(--texto-2); }
+.leyenda li strong { color: var(--texto); }
+.leyenda-color { position: absolute; left: 0; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+
+/* ================= Página de una finca ================= */
+.volver { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 600; color: var(--texto-2); text-decoration: none; }
+.volver:hover { color: var(--marca); }
+
+.cabecera-finca { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 20px 22px; border-top: 5px solid var(--c); }
+.cabecera-finca-titulo { display: flex; align-items: center; gap: 16px; }
+.cabecera-finca .icono-caja { width: 60px; height: 60px; border-radius: 16px; }
+.cabecera-finca .icono-caja svg { width: 38px; height: 38px; }
+.cabecera-finca h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+.cabecera-finca p { color: var(--texto-2); font-size: 0.92rem; margin-top: 2px; }
+.cabecera-finca-estado { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.cabecera-finca-estado .pildora { font-size: 0.95rem; padding: 6px 14px; }
+.cabecera-finca-estado small { font-size: 0.8rem; color: var(--texto-3); }
+
+/* Qué hacer ahora: la primera tarjeta va rellena, las demás con borde */
+.tareas { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.tarea { display: flex; flex-direction: column; gap: 10px; padding: 18px; min-height: 170px; }
+.tarea-cabecera { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.tarea h3 { font-size: 1.05rem; font-weight: 800; line-height: 1.35; }
+.tarea-pie { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; flex-wrap: wrap; }
+.tarea-pie small { color: var(--texto-2); font-size: 0.8rem; }
+.tarea.principal { background: var(--marca); border-color: var(--marca); color: #fff; box-shadow: 0 8px 22px rgba(15, 95, 90, 0.25); }
+.tarea.principal .etiqueta { background: rgba(255, 255, 255, 0.14); border-color: transparent; color: #fff; }
+.tarea.principal .pildora { background: #fff; }
+.tarea.principal small { color: rgba(255, 255, 255, 0.8); }
+.tarea.hecha { opacity: 0.7; }
+.tarea.tranquila { grid-column: 1 / -1; flex-direction: row; align-items: center; min-height: 0; background: var(--bien-suave); border-color: transparent; }
+.tarea.tranquila svg { width: 34px; height: 34px; flex-shrink: 0; fill: none; stroke: var(--bien); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tarea.tranquila h3 { color: var(--bien); }
+.tarea.tranquila p { color: var(--texto-2); font-size: 0.9rem; }
+
+/* Indicadores por variable con minigráfica */
+.indicadores-finca { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.kpi { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; }
+.kpi-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 0.88rem; font-weight: 600; color: var(--texto-2); }
+.kpi-cabecera span { display: flex; align-items: center; gap: 6px; }
+.kpi-cabecera svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.kpi-cabecera button { border: none; background: none; padding: 0; color: var(--marca); font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+.kpi-cabecera button:hover { text-decoration: underline; }
+.kpi-cuerpo { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.kpi-valor { font-size: 2.3rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.kpi-valor small { font-size: 1rem; font-weight: 600; color: var(--texto-3); margin-left: 3px; letter-spacing: 0; }
+.kpi-minigrafica { width: 120px; height: 52px; flex-shrink: 1; min-width: 70px; overflow: visible; }
+.kpi-minigrafica .franja { fill: var(--bien-suave); }
+.kpi-minigrafica .area { fill: var(--c); opacity: 0.12; }
+.kpi-minigrafica .linea { fill: none; stroke: var(--c); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.kpi-minigrafica .punto { fill: var(--c); stroke: #fff; stroke-width: 2; }
+.kpi-pie { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.cambio { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; }
+.cambio[data-sentido="mejor"] { background: var(--bien-suave); color: var(--bien); }
+.cambio[data-sentido="peor"] { background: var(--actuar-suave); color: var(--actuar); }
+.cambio[data-sentido="igual"] { background: var(--superficie-2); color: var(--texto-2); }
+.kpi-ideal { font-size: 0.78rem; color: var(--texto-3); }
+
+/* Tendencia */
+.tendencia { padding: 18px 20px; }
+.tendencia .cabecera-seccion { margin-bottom: 0; }
+.grupo-pildoras { display: inline-flex; flex-wrap: wrap; padding: 3px; gap: 2px; background: var(--superficie-2); border: 1px solid var(--borde); border-radius: 999px; }
+.grupo-pildoras button { padding: 6px 14px; border: none; border-radius: 999px; background: none; color: var(--texto-2); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+.grupo-pildoras button[aria-pressed="true"] { background: var(--superficie); color: var(--marca); box-shadow: var(--sombra); }
+.lienzo-tendencia { position: relative; height: 280px; margin-top: 14px; }
+.resumen-tendencia { margin-top: 10px; font-size: 0.9rem; color: var(--texto-2); }
+
+/* Tablas */
+.dos-columnas { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.bloque { padding: 18px 20px; }
+.bloque h2 { font-size: 1.1rem; font-weight: 800; }
+.bloque > .nota { margin-top: 2px; }
+.tabla-envoltura { overflow-x: auto; margin-top: 12px; }
+.tabla { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.tabla th {
+    padding: 10px 12px; text-align: left; white-space: nowrap;
+    background: var(--superficie-2);
+    color: var(--texto-2); font-size: 0.78rem; font-weight: 700;
+    border-bottom: 1px solid var(--borde);
+}
+.tabla th:first-child { border-radius: 8px 0 0 8px; }
+.tabla th:last-child { border-radius: 0 8px 8px 0; }
+.tabla td { padding: 12px; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+.tabla tr:last-child td { border-bottom: none; }
+.tabla .num { font-variant-numeric: tabular-nums; }
+.tabla td.valor[data-nivel] { color: var(--c); font-weight: 700; }
+.tabla td.valor[data-nivel="bien"] { color: inherit; font-weight: 400; }
+.progreso { display: flex; flex-direction: column; gap: 4px; min-width: 120px; }
+.progreso-barra { height: 6px; border-radius: 3px; background: var(--superficie-2); border: 1px solid var(--borde); overflow: hidden; }
+.progreso-barra span { display: block; height: 100%; background: var(--marca); border-radius: 3px; }
+.progreso[data-nivel="atencion"] .progreso-barra span { background: var(--acento); }
+.progreso[data-nivel="actuar"] .progreso-barra span { background: var(--actuar); }
+.progreso-texto { display: flex; justify-content: space-between; gap: 8px; font-size: 0.78rem; color: var(--texto-2); }
+
+/* Línea de tiempo */
+.linea-tiempo { margin-top: 14px; display: flex; flex-direction: column; max-height: 430px; overflow-y: auto; }
+.evento { display: grid; grid-template-columns: 82px 1fr; gap: 8px; padding-bottom: 14px; }
+.evento-hora { font-size: 0.8rem; color: var(--texto-2); font-variant-numeric: tabular-nums; padding-top: 1px; }
+.evento-cuerpo { position: relative; padding-left: 20px; font-size: 0.88rem; }
+.evento-cuerpo::before { content: ""; position: absolute; left: 0; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px var(--c-suave); }
+.evento-cuerpo::after { content: ""; position: absolute; left: 4px; top: 19px; bottom: -13px; width: 2px; background: var(--borde); }
+.evento:last-child .evento-cuerpo::after { display: none; }
+.evento-cuerpo strong { color: var(--c); }
+.evento[data-tipo="hecho"] .evento-cuerpo { --c: var(--marca); --c-suave: var(--marca-suave); }
+
+.ayuda-finca { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 12px; }
+.ayuda-finca h3 { display: flex; align-items: center; gap: 6px; font-size: 0.95rem; font-weight: 800; margin-bottom: 4px; }
+.ayuda-finca h3 svg { width: 18px; height: 18px; fill: none; stroke: var(--marca); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ayuda-finca p { font-size: 0.88rem; color: var(--texto-2); }
+
+/* ---------- Pantallas medianas y pequeñas ---------- */
+@media (max-width: 1000px) {
+    .columnas, .dos-columnas { grid-template-columns: 1fr; }
+    .avisos { position: static; }
+    .indicadores-finca { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+    .conteos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+    .barra-superior { padding: 10px 16px; }
+    .pagina { padding: 16px; gap: 22px; }
+    .saludo h1 { font-size: 1.4rem; }
+    .fincas, .tareas { grid-template-columns: 1fr; }
+    .conteo-numero { font-size: 2rem; }
+    .cabecera-finca-estado { align-items: flex-start; }
+    .kpi-valor { font-size: 2rem; }
+    .lienzo-tendencia { height: 230px; }
+}

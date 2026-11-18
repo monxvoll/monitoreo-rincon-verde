@@ -1,0 +1,135 @@
+{
+    "segundos_sin_senal": 20,
+
+    "variables": {
+        "temperatura": { "nombre": "Temperatura", "corto": "Temperatura", "unidad": "°C", "decimales": 1, "cambio_minimo": 0.5 },
+        "humedad": { "nombre": "Humedad del aire", "corto": "Humedad", "unidad": "%", "decimales": 0, "cambio_minimo": 1.5 },
+        "co2": { "nombre": "Aire (CO₂)", "corto": "Aire", "unidad": "ppm", "decimales": 0, "cambio_minimo": 20 }
+    },
+
+    "tipos": {
+        "ganaderia": {
+            "nombre": "Ganadería de leche",
+            "corto": "Ganadería",
+            "lugar": "Establo",
+            "variables": {
+                "temperatura": {
+                    "escala": [0, 32],
+                    "ayuda": "Temperatura dentro del establo. Las vacas lecheras están cómodas entre 8 y 22 °C; con más de 25 °C sufren estrés por calor y dan menos leche.",
+                    "tramos": [
+                        { "hasta": 4, "nivel": "actuar", "palabra": "Mucho frío", "consejo": "Frío fuerte: cierre las cortinas del establo y dé una ración extra de forraje." },
+                        { "hasta": 8, "nivel": "atencion", "palabra": "Frío", "consejo": "Está frío: cierre las cortinas del establo en la noche." },
+                        { "hasta": 22, "nivel": "bien", "palabra": "Bien", "consejo": "" },
+                        { "hasta": 25, "nivel": "atencion", "palabra": "Caluroso", "consejo": "Está subiendo el calor: abra cortinas y revise que los bebederos tengan agua." },
+                        { "hasta": null, "nivel": "actuar", "palabra": "Estrés por calor", "consejo": "Calor fuerte, las vacas producen menos leche: abra el establo y dé agua fresca y sombra." }
+                    ]
+                },
+                "humedad": {
+                    "escala": [30, 100],
+                    "ayuda": "Cuánta agua hay en el aire del establo. Lo ideal es entre 40 y 75 %. Con humedad alta la cama se moja y aumentan la mastitis y los problemas de patas.",
+                    "tramos": [
+                        { "hasta": 40, "nivel": "atencion", "palabra": "Seco", "consejo": "Aire seco: humedezca el piso para que no se levante polvo." },
+                        { "hasta": 75, "nivel": "bien", "palabra": "Bien", "consejo": "" },
+                        { "hasta": 85, "nivel": "atencion", "palabra": "Húmedo", "consejo": "Humedad alta: cambie la cama y revise que el piso esté seco." },
+                        { "hasta": null, "nivel": "actuar", "palabra": "Muy húmedo", "consejo": "Humedad muy alta, riesgo de mastitis y problemas de patas: ventile y cambie la cama hoy." }
+                    ]
+                },
+                "co2": {
+                    "escala": [300, 3000],
+                    "ayuda": "Mide si el aire del establo se renueva. Los animales respiran y el CO₂ sube; por encima de 2.500 ppm falta ventilación y se afecta su respiración.",
+                    "tramos": [
+                        { "hasta": 1500, "nivel": "bien", "palabra": "Bien", "consejo": "" },
+                        { "hasta": 2500, "nivel": "atencion", "palabra": "Algo cargado", "consejo": "El aire del establo se está cargando: abra ventanas o cortinas." },
+                        { "hasta": null, "nivel": "actuar", "palabra": "Muy cargado", "consejo": "Aire muy cargado: ventile el establo ahora, afecta la respiración de los animales." }
+                    ]
+                }
+            }
+        },
+
+        "papa": {
+            "nombre": "Cultivo de papa",
+            "corto": "Papa",
+            "lugar": "Campo abierto",
+            "variables": {
+                "temperatura": {
+                    "escala": [-2, 28],
+                    "ayuda": "Temperatura del aire sobre el cultivo. La papa crece mejor entre 8 y 20 °C. Por debajo de 3 °C hay riesgo de helada, que quema las hojas en la madrugada.",
+                    "tramos": [
+                        { "hasta": 3, "nivel": "actuar", "palabra": "Riesgo de helada", "consejo": "Riesgo de helada: riegue al atardecer y cubra los surcos si puede." },
+                        { "hasta": 8, "nivel": "atencion", "palabra": "Frío", "consejo": "Noche fría: esté pendiente de heladas en la madrugada." },
+                        { "hasta": 20, "nivel": "bien", "palabra": "Bien", "consejo": "" },
+                        { "hasta": 24, "nivel": "atencion", "palabra": "Caluroso", "consejo": "Calor: la papa engrosa menos, revise la humedad del suelo." },
+                        { "hasta": null, "nivel": "actuar", "palabra": "Mucho calor", "consejo": "Calor fuerte, la papa deja de engrosar: riegue en la tarde." }
+                    ]
+                },
+                "humedad": {
+                    "escala": [30, 100],
+                    "ayuda": "Cuánta agua hay en el aire. Lo ideal es entre 50 y 85 %. Con más de 92 % durante varias horas aparece la gota (tizón tardío), la enfermedad más dañina de la papa.",
+                    "tramos": [
+                        { "hasta": 50, "nivel": "atencion", "palabra": "Seco", "consejo": "Ambiente seco: revise si el cultivo necesita riego." },
+                        { "hasta": 85, "nivel": "bien", "palabra": "Bien", "consejo": "" },
+                        { "hasta": 92, "nivel": "atencion", "palabra": "Húmedo", "consejo": "Humedad alta: revise si aparecen manchas en las hojas." },
+                        { "hasta": null, "nivel": "actuar", "palabra": "Riesgo de gota", "consejo": "Humedad muy alta, riesgo de gota: revise las hojas y considere la fumigación preventiva." }
+                    ]
+                },
+                "co2": {
+                    "escala": [350, 700],
+                    "ayuda": "En campo abierto el aire se renueva siempre, así que este dato casi no cambia (unos 420 ppm). Sirve para comprobar que el sensor funciona y para notar quemas cercanas.",
+                    "tramos": [
+                        { "hasta": 550, "nivel": "bien", "palabra": "Normal", "consejo": "" },
+                        { "hasta": 650, "nivel": "atencion", "palabra": "Inusual", "consejo": "Valor raro para campo abierto: revise el sensor o si hay una quema cerca." },
+                        { "hasta": null, "nivel": "actuar", "palabra": "Revisar sensor", "consejo": "Valor muy raro para campo abierto: puede haber una quema cerca o el sensor está fallando." }
+                    ]
+                }
+            }
+        },
+
+        "tomate": {
+            "nombre": "Tomate bajo invernadero",
+            "corto": "Tomate",
+            "lugar": "Invernadero",
+            "variables": {
+                "temperatura": {
+                    "escala": [10, 38],
+                    "ayuda": "Qué tan caliente está el aire dentro del invernadero. El tomate crece mejor entre 18 y 27 °C; con más de 30 °C las flores se caen y con menos de 15 °C la planta se detiene.",
+                    "tramos": [
+                        { "hasta": 15, "nivel": "actuar", "palabra": "Frío", "consejo": "Hace frío: cierre cortinas y ventanas del invernadero para guardar el calor." },
+                        { "hasta": 18, "nivel": "atencion", "palabra": "Fresco", "consejo": "Está fresco: cierre las cortinas al final de la tarde." },
+                        { "hasta": 27, "nivel": "bien", "palabra": "Bien", "consejo": "" },
+                        { "hasta": 30, "nivel": "atencion", "palabra": "Caluroso", "consejo": "Está subiendo el calor: abra cortinas o ventanas." },
+                        { "hasta": null, "nivel": "actuar", "palabra": "Mucho calor", "consejo": "Calor fuerte: ventile ya y riegue en horas frescas, las flores se pueden caer." }
+                    ]
+                },
+                "humedad": {
+                    "escala": [30, 100],
+                    "ayuda": "Cuánta agua hay en el aire. Lo ideal es entre 55 y 80 %. Con aire muy seco la planta se estresa; con más de 85 % aparecen hongos como el moho gris.",
+                    "tramos": [
+                        { "hasta": 45, "nivel": "actuar", "palabra": "Muy seco", "consejo": "Aire muy seco: riegue y moje los pasillos." },
+                        { "hasta": 55, "nivel": "atencion", "palabra": "Algo seco", "consejo": "Ambiente algo seco: revise que el riego esté funcionando." },
+                        { "hasta": 80, "nivel": "bien", "palabra": "Bien", "consejo": "" },
+                        { "hasta": 85, "nivel": "atencion", "palabra": "Húmedo", "consejo": "Mucha humedad: ventile para evitar hongos." },
+                        { "hasta": null, "nivel": "actuar", "palabra": "Muy húmedo", "consejo": "Riesgo de hongos: ventile ahora y no riegue por aspersión hoy." }
+                    ]
+                },
+                "co2": {
+                    "escala": [350, 1100],
+                    "ayuda": "Mide si el aire del invernadero se está renovando. Afuera hay unos 420 ppm; si sube mucho es señal de que falta ventilación.",
+                    "tramos": [
+                        { "hasta": 700, "nivel": "bien", "palabra": "Bien", "consejo": "" },
+                        { "hasta": 800, "nivel": "atencion", "palabra": "Algo cargado", "consejo": "El aire se está cargando: abra un poco las ventanas." },
+                        { "hasta": null, "nivel": "actuar", "palabra": "Muy cargado", "consejo": "Aire muy cargado: ventile el invernadero ahora." }
+                    ]
+                }
+            }
+        }
+    },
+
+    "fincas": {
+        "finca_1": { "nombre": "La Esperanza", "tipo": "ganaderia", "detalle": "30 vacas Holstein · Belén" },
+        "finca_2": { "nombre": "El Rosal", "tipo": "ganaderia", "detalle": "18 vacas Normando · Duitama" },
+        "finca_3": { "nombre": "San Isidro", "tipo": "papa", "detalle": "4 hectáreas de papa pastusa · Ventaquemada" },
+        "finca_4": { "nombre": "Los Alisos", "tipo": "papa", "detalle": "2,5 hectáreas de papa criolla · Toca" },
+        "finca_5": { "nombre": "Buenavista", "tipo": "tomate", "detalle": "3 invernaderos de tomate chonto · Sutamarchán" },
+        "finca_6": { "nombre": "El Recreo", "tipo": "tomate", "detalle": "2 invernaderos de tomate · Santa Sofía" }
+    }
+}
