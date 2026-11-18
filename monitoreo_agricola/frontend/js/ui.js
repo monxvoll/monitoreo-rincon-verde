@@ -1,4 +1,4 @@
-import { UMBRAL_TEMP, UMBRAL_CO2, MAX_HISTORIAL, INTERVALO_ALERTAS_MS } from './config.js';
+import { UMBRAL_TEMP, UMBRAL_CO2, MAX_HISTORIAL, INTERVALO_ALERTAS_MS, nombreFinca } from './config.js';
 import { formatearHora, pct } from './utils.js';
 
 const ultimasAlertas = {};
@@ -93,7 +93,7 @@ export function actualizarTarjeta(datos) {
             const reasons = [];
             if (datos.temperatura > UMBRAL_TEMP) reasons.push(`el nivel de temperatura es anormalmente alto (${datos.temperatura}°C)`);
             if (datos.co2 > UMBRAL_CO2) reasons.push(`el nivel de CO₂ es demasiado elevado (${datos.co2} ppm)`);
-            const fincaLabel = id === "finca_1" ? "Finca 1" : "Finca 2";
+            const fincaLabel = nombreFinca(id);
             mostrarToast(`<strong>Alerta en ${fincaLabel}:</strong> ${reasons.join(" y ")}.`);
             
             ultimasAlertas[id] = ahora;

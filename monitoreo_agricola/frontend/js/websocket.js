@@ -1,5 +1,6 @@
 import { WS_URL } from './config.js';
 import { actualizarTarjeta, agregarFilaTabla } from './ui.js';
+import { agregarPuntoGrafica } from './chart.js';
 
 export function iniciarWebSocket() {
     const ws = new WebSocket(WS_URL);
@@ -16,6 +17,7 @@ export function iniciarWebSocket() {
         const datos = JSON.parse(event.data);
         actualizarTarjeta(datos);
         agregarFilaTabla(datos, true);
+        agregarPuntoGrafica(datos);
     };
 
     ws.onclose = () => {

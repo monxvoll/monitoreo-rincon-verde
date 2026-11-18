@@ -58,33 +58,26 @@
 
 .history-columns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    height: 440px;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
 }
 
 @media (max-width: 768px) {
     .history-columns {
         grid-template-columns: 1fr;
-        height: auto;
     }
 }
 
 .history-column {
     overflow-y: auto;
     position: relative;
-}
-
-.history-column:first-child {
+    max-height: 440px;
     border-right: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 @media (max-width: 768px) {
-    .history-column:first-child {
-        border-right: none;
-        border-bottom: 1px solid var(--border-subtle);
-    }
-
     .history-column {
+        border-right: none;
         max-height: 320px;
     }
 }
