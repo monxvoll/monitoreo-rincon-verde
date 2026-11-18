@@ -1,5 +1,12 @@
-export const API_URL = "http://localhost:8000/api/historial";
-export const WS_URL = "ws://localhost:8000/ws/monitoreo";
+const HOST = window.location.hostname || "localhost";
+export const MOTOR = document.body?.dataset?.motor === "redis" ? "redis" : "postgres";
+const PUERTO_MOTOR = MOTOR === "redis" ? 8001 : 8000;
+
+export const API_URL = `http://${HOST}:${PUERTO_MOTOR}/api/historial`;
+export const WS_URL = `ws://${HOST}:${PUERTO_MOTOR}/ws/monitoreo`;
+
+export const COMPARADOR_API_URL = `http://${HOST}:8010/api/resumen`;
+export const COMPARADOR_WS_URL = `ws://${HOST}:8010/ws/comparacion`;
 
 export const NUM_FINCAS = 6;
 export const FINCAS = Array.from({ length: NUM_FINCAS }, (_, i) => `finca_${i + 1}`);

@@ -27,6 +27,35 @@ services:
       postgres:
         condition: service_healthy
 
+  backend-redis:
+    build: .
+    profiles: ["comparacion"]
+    command: uvicorn backend.redis_main:app --host 0.0.0.0 --port 8001
+    ports:
+      - "${REDIS_BACKEND_PORT:-8001}:8001"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - PREFIJO_FINCAS=finca_
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  espejo-redis:
+    build: .
+    profiles: ["comparacion"]
+    command: python espejo/main.py
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/monitoreo
+      - REDIS_URL=redis://redis:6379/0
+      - NUM_FINCAS=${NUM_FINCAS:-6}
+      - PREFIJO_FINCAS=finca_
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   simulador:
     build: .
     command: python sensor_mock.py
@@ -43,6 +72,42 @@ services:
       - "8080:80"
     volumes:
       - ./frontend:/usr/share/nginx/html
+
+  redis:
+    image: redis:alpine
+    profiles: ["comparacion"]
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - "${REDIS_APPENDFSYNC:-everysec}"
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  comparador:
+    build: .
+    profiles: ["comparacion"]
+    command: uvicorn comparador.main:app --host 0.0.0.0 --port 8010
+    ports:
+      - "${COMPARADOR_PORT:-8010}:8010"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/monitoreo
+      - REDIS_URL=redis://redis:6379/0
+      - INTERVALO_MS=${INTERVALO_MS:-1000}
+      - NUM_FINCAS=${NUM_FINCAS:-6}
+      - VENTANA_MUESTRAS=${VENTANA_MUESTRAS:-300}
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   pgdata:

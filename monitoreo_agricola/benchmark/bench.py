@@ -9,16 +9,17 @@ Requiere que el backend de datos correspondiente este en ejecucion.
 
 import argparse
 import json
+import os
 import queue
 import statistics
-import threading
+import sys
 import time
 import uuid
 from datetime import datetime, timezone
 
-CANAL_TIEMPO_REAL = "fincas_updates"
-FINCA_BENCHMARK = "bench_finca"
-MAX_HISTORIAL = 50
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from benchmark.backends import FINCA_BENCHMARK, PostgresBackend, RedisBackend
 
 DEFAULT_URLS = {
     "postgres": "postgresql://postgres:postgres@localhost:5433/monitoreo",
@@ -66,126 +67,6 @@ def imprimir_resumen(nombre: str, resumen: dict, throughput: float | None = None
     if throughput is not None:
         linea += f"  throughput={throughput:>8.1f} ops/s"
     print(linea)
-
-
-class PostgresBackend:
-    nombre = "postgres"
-
-    def __init__(self, url: str):
-        import psycopg
-
-        self.psycopg = psycopg
-        self.url = url
-        self.conn = psycopg.connect(url)
-        self.listener_conn = None
-        self.detener = threading.Event()
-        self.hilo_listener = None
-
-    def escribir(self, datos: dict) -> None:
-        with self.conn.cursor() as cur:
-            cur.execute(
-                """
-                INSERT INTO lecturas (finca_id, ts, temperatura, humedad, co2)
-                VALUES (%s, %s, %s, %s, %s)
-                """,
-                (
-                    datos["finca_id"],
-                    datos["timestamp"],
-                    datos["temperatura"],
-                    datos["humedad"],
-                    datos["co2"],
-                ),
-            )
-        self.conn.commit()
-
-    def leer_historial(self) -> list:
-        with self.conn.cursor() as cur:
-            cur.execute(
-                """
-                SELECT finca_id, ts, temperatura, humedad, co2
-                FROM lecturas
-                WHERE finca_id = %s
-                ORDER BY ts DESC
-                LIMIT %s
-                """,
-                (FINCA_BENCHMARK, MAX_HISTORIAL),
-            )
-            return cur.fetchall()
-
-    def iniciar_listener(self, cola: queue.Queue) -> None:
-        self.listener_conn = self.psycopg.connect(self.url, autocommit=True)
-        self.listener_conn.execute(f"LISTEN {CANAL_TIEMPO_REAL}")
-
-        def escuchar():
-            try:
-                while not self.detener.is_set():
-                    for notify in self.listener_conn.notifies(timeout=0.5):
-                        cola.put(notify.payload)
-            except Exception:
-                pass
-
-        self.hilo_listener = threading.Thread(target=escuchar, daemon=True)
-        self.hilo_listener.start()
-
-    def cerrar(self) -> None:
-        self.detener.set()
-        if self.hilo_listener is not None:
-            self.hilo_listener.join(timeout=2)
-        if self.listener_conn is not None:
-            try:
-                self.listener_conn.close()
-            except Exception:
-                pass
-        self.conn.close()
-
-
-class RedisBackend:
-    nombre = "redis"
-
-    def __init__(self, url: str):
-        import redis
-
-        self.redis = redis.Redis.from_url(url, decode_responses=True)
-        self.pubsub = None
-        self.detener = threading.Event()
-        self.hilo_listener = None
-
-    def escribir(self, datos: dict) -> None:
-        payload = json.dumps(datos)
-        clave = datos["finca_id"]
-        pipe = self.redis.pipeline()
-        pipe.set(f"{clave}:estado_actual", payload)
-        pipe.lpush(f"{clave}:historial", payload)
-        pipe.ltrim(f"{clave}:historial", 0, MAX_HISTORIAL - 1)
-        pipe.publish(CANAL_TIEMPO_REAL, payload)
-        pipe.execute()
-
-    def leer_historial(self) -> list:
-        return self.redis.lrange(f"{FINCA_BENCHMARK}:historial", 0, MAX_HISTORIAL - 1)
-
-    def iniciar_listener(self, cola: queue.Queue) -> None:
-        self.pubsub = self.redis.pubsub(ignore_subscribe_messages=True)
-        self.pubsub.subscribe(CANAL_TIEMPO_REAL)
-
-        def escuchar():
-            while not self.detener.is_set():
-                mensaje = self.pubsub.get_message(timeout=0.5)
-                if mensaje and mensaje.get("type") == "message":
-                    cola.put(mensaje["data"])
-
-        self.hilo_listener = threading.Thread(target=escuchar, daemon=True)
-        self.hilo_listener.start()
-
-    def cerrar(self) -> None:
-        self.detener.set()
-        if self.hilo_listener is not None:
-            self.hilo_listener.join(timeout=2)
-        if self.pubsub is not None:
-            try:
-                self.pubsub.close()
-            except Exception:
-                pass
-        self.redis.close()
 
 
 def medir_escritura(backend, n: int) -> tuple[list[float], float]:

@@ -81,6 +81,37 @@
     text-transform: uppercase;
 }
 
+/* Comparison link */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.compare-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border: 1px solid var(--border-active);
+    border-radius: 999px;
+    background: var(--accent-green-dim);
+    color: var(--accent-green);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.compare-link:hover {
+    border-color: var(--accent-green);
+    background: rgba(52, 199, 89, 0.18);
+    box-shadow: 0 0 20px var(--accent-green-dim);
+}
+
 /* Connection Badge */
 .connection-badge {
     display: flex;
@@ -145,5 +176,9 @@
 
     .brand-title {
         font-size: 1.3rem;
+    }
+
+    .header-actions {
+        justify-content: center;
     }
 }

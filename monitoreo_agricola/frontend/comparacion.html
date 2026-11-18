@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Comparación en tiempo real entre Redis y PostgreSQL para el monitoreo agrícola de Rincón Verde.">
+    <title>Rincón Verde — Comparación Redis vs PostgreSQL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/comparacion.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <header class="header">
+            <div class="header-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <ellipse cx="12" cy="5" rx="9" ry="3" />
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                    </svg>
+                </div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <div class="brand-title">Rincón Verde</div>
+                        <div id="compare-badge" class="connection-badge offline">
+                            <span class="status-dot"></span>
+                            <span id="compare-status">Conectando...</span>
+                        </div>
+                    </div>
+                    <div class="brand-subtitle">Comparación Redis vs PostgreSQL en tiempo real</div>
+                </div>
+            </div>
+            <nav class="header-actions">
+                <a class="compare-link" href="index.html">Principal</a>
+                <a class="compare-link" href="postgres.html">PostgreSQL</a>
+                <a class="compare-link" href="redis.html">Redis</a>
+            </nav>
+        </header>
+
+        <section class="compare-meta">
+            <span class="meta-chip"><strong id="meta-fincas">--</strong> fincas por ciclo</span>
+            <span class="meta-chip">Intervalo <strong id="meta-intervalo">--</strong></span>
+            <span class="meta-chip">Activo <strong id="meta-uptime">--</strong></span>
+            <span class="meta-chip meta-note">Dual-write alternado · ambos comparten el mismo equipo</span>
+        </section>
+
+        <section class="compare-grid">
+            <article class="engine-card engine-postgres" id="card-postgres">
+                <div class="engine-head">
+                    <span class="engine-dot"></span>
+                    <div>
+                        <div class="engine-title">PostgreSQL</div>
+                        <div class="engine-subtitle">INSERT + COMMIT · LISTEN/NOTIFY</div>
+                    </div>
+                    <span class="engine-tag">5433</span>
+                </div>
+
+                <div class="engine-highlights">
+                    <div class="engine-highlight">
+                        <span class="engine-highlight-value" data-field="escritura-p50">--</span>
+                        <span class="engine-highlight-label">Escritura p50 (ms)</span>
+                    </div>
+                    <div class="engine-highlight">
+                        <span class="engine-highlight-value" data-field="e2e-p50">--</span>
+                        <span class="engine-highlight-label">Tiempo real p50 (ms)</span>
+                    </div>
+                </div>
+
+                <div class="metric-rows">
+                    <div class="metric-row"><span>Escritura media</span><strong data-field="escritura-media">--</strong></div>
+                    <div class="metric-row"><span>Escritura p95</span><strong data-field="escritura-p95">--</strong></div>
+                    <div class="metric-row"><span>Escritura p99</span><strong data-field="escritura-p99">--</strong></div>
+                    <div class="metric-row"><span>Tiempo real media</span><strong data-field="e2e-media">--</strong></div>
+                    <div class="metric-row"><span>Tiempo real p95</span><strong data-field="e2e-p95">--</strong></div>
+                    <div class="metric-row"><span>Tiempo real p99</span><strong data-field="e2e-p99">--</strong></div>
+                    <div class="metric-row"><span>Throughput</span><strong data-field="throughput">--</strong></div>
+                    <div class="metric-row"><span>Operaciones</span><strong data-field="total">--</strong></div>
+                    <div class="metric-row"><span>Errores</span><strong data-field="errores">--</strong></div>
+                </div>
+            </article>
+
+            <article class="engine-card engine-redis" id="card-redis">
+                <div class="engine-head">
+                    <span class="engine-dot"></span>
+                    <div>
+                        <div class="engine-title">Redis</div>
+                        <div class="engine-subtitle">SET + LPUSH + LTRIM · PUB/SUB · AOF</div>
+                    </div>
+                    <span class="engine-tag">6379</span>
+                </div>
+
+                <div class="engine-highlights">
+                    <div class="engine-highlight">
+                        <span class="engine-highlight-value" data-field="escritura-p50">--</span>
+                        <span class="engine-highlight-label">Escritura p50 (ms)</span>
+                    </div>
+                    <div class="engine-highlight">
+                        <span class="engine-highlight-value" data-field="e2e-p50">--</span>
+                        <span class="engine-highlight-label">Tiempo real p50 (ms)</span>
+                    </div>
+                </div>
+
+                <div class="metric-rows">
+                    <div class="metric-row"><span>Escritura media</span><strong data-field="escritura-media">--</strong></div>
+                    <div class="metric-row"><span>Escritura p95</span><strong data-field="escritura-p95">--</strong></div>
+                    <div class="metric-row"><span>Escritura p99</span><strong data-field="escritura-p99">--</strong></div>
+                    <div class="metric-row"><span>Tiempo real media</span><strong data-field="e2e-media">--</strong></div>
+                    <div class="metric-row"><span>Tiempo real p95</span><strong data-field="e2e-p95">--</strong></div>
+                    <div class="metric-row"><span>Tiempo real p99</span><strong data-field="e2e-p99">--</strong></div>
+                    <div class="metric-row"><span>Throughput</span><strong data-field="throughput">--</strong></div>
+                    <div class="metric-row"><span>Operaciones</span><strong data-field="total">--</strong></div>
+                    <div class="metric-row"><span>Errores</span><strong data-field="errores">--</strong></div>
+                </div>
+            </article>
+        </section>
+
+        <section class="chart-section">
+            <div class="chart-header">
+                <div>
+                    <div class="chart-title">Latencia en vivo</div>
+                    <div class="chart-subtitle">p50 y p95 de cada motor; últimos 120 ciclos recibidos</div>
+                </div>
+                <div class="chart-controls">
+                    <div class="pill-group" id="chart-metrics" role="group" aria-label="Métrica">
+                        <button class="pill active" data-metric="escritura">Escritura</button>
+                        <button class="pill" data-metric="tiempo_real">Tiempo real (e2e)</button>
+                    </div>
+                    <button id="pause-btn" class="pill" type="button">Pausar</button>
+                </div>
+            </div>
+            <div class="chart-canvas-wrap"><canvas id="compare-chart"></canvas></div>
+            <p class="chart-summary" id="compare-summary">Esperando datos del comparador…</p>
+        </section>
+
+        <section class="history-section">
+            <div class="history-header">
+                <div class="history-header-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
+                    <div>
+                        <div class="history-title">Últimas muestras</div>
+                        <div class="history-subtitle">Latencia p50 por motor en cada ciclo recibido</div>
+                    </div>
+                </div>
+            </div>
+            <div class="compare-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hora</th>
+                            <th>PG escritura</th>
+                            <th>Redis escritura</th>
+                            <th>PG tiempo real</th>
+                            <th>Redis tiempo real</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compare-table-body">
+                        <tr>
+                            <td colspan="5">Esperando datos…</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <p class="compare-footnote">
+            Comparación demostrativa en simultáneo: ambos motores compiten por CPU y disco.
+            Para cifras definitivas usar el benchmark secuencial documentado en
+            <code>docs/COMPARACION.md</code>.
+        </p>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script type="module" src="js/comparacion.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,237 @@
+/* Comparación en vivo — Redis vs PostgreSQL */
+.compare-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    background: var(--bg-metric);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 500;
+}
+
+.meta-chip strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.meta-note {
+    margin-left: auto;
+    border-color: var(--border-active);
+    color: var(--text-muted);
+}
+
+.compare-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.engine-card {
+    position: relative;
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 22px 24px;
+    overflow: hidden;
+}
+
+.engine-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--engine-color);
+    opacity: 0.9;
+}
+
+.engine-postgres {
+    --engine-color: #60a5fa;
+    --engine-dim: rgba(96, 165, 250, 0.12);
+}
+
+.engine-redis {
+    --engine-color: #ff6b6b;
+    --engine-dim: rgba(255, 107, 107, 0.12);
+}
+
+.engine-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.engine-dot {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--engine-color);
+    box-shadow: 0 0 12px var(--engine-color);
+}
+
+.engine-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.engine-subtitle {
+    font-size: 0.64rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.engine-tag {
+    margin-left: auto;
+    padding: 4px 10px;
+    border: 1px solid var(--engine-color);
+    border-radius: 999px;
+    background: var(--engine-dim);
+    color: var(--engine-color);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.engine-highlights {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.engine-highlight {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 16px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: var(--bg-metric);
+}
+
+.engine-highlight-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--engine-color);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+}
+
+.engine-highlight-label {
+    font-size: 0.64rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.metric-rows {
+    display: grid;
+    gap: 8px;
+}
+
+.metric-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(52, 199, 89, 0.06);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+.metric-row:last-child {
+    border-bottom: none;
+}
+
+.metric-row strong {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.compare-table-wrap {
+    overflow-x: auto;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.compare-table-wrap thead th {
+    text-align: right;
+}
+
+.compare-table-wrap thead th:first-child,
+.compare-table-wrap tbody td:first-child {
+    text-align: left;
+}
+
+.compare-table-wrap tbody td {
+    text-align: right;
+}
+
+.compare-table-wrap tbody td.col-postgres {
+    color: #93c5fd;
+}
+
+.compare-table-wrap tbody td.col-redis {
+    color: #fca5a5;
+}
+
+.compare-footnote {
+    margin-top: 24px;
+    font-size: 0.72rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.compare-footnote code {
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: var(--bg-elevated);
+    color: var(--accent-green);
+    font-size: 0.68rem;
+}
+
+@media (max-width: 900px) {
+    .compare-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .meta-note {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 560px) {
+    .engine-card {
+        padding: 18px;
+    }
+
+    .engine-highlight-value {
+        font-size: 1.45rem;
+    }
+}

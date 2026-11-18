@@ -13,6 +13,7 @@ DATABASE_URL = os.getenv(
 )
 CANAL_TIEMPO_REAL = "fincas_updates"
 MAX_HISTORIAL = 50
+PREFIJO_FINCAS = os.getenv("PREFIJO_FINCAS", "finca_")
 
 # Umbrales criticos para generar alertas
 UMBRAL_TEMPERATURA = 30.0  # grados Celsius
@@ -108,6 +109,9 @@ async def websocket_monitoreo(websocket: WebSocket):
                 continue
 
             datos = json.loads(payload)
+
+            if not str(datos.get("finca_id", "")).startswith(PREFIJO_FINCAS):
+                continue
 
             # Evaluar si algun valor supera los umbrales criticos
             datos["alerta"] = (

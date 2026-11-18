@@ -1,4 +1,4 @@
-import { WS_URL } from './config.js';
+import { WS_URL, FINCAS } from './config.js';
 import { actualizarTarjeta, agregarFilaTabla } from './ui.js';
 import { agregarPuntoGrafica } from './chart.js';
 
@@ -15,6 +15,7 @@ export function iniciarWebSocket() {
 
     ws.onmessage = (event) => {
         const datos = JSON.parse(event.data);
+        if (!FINCAS.includes(datos.finca_id)) return;
         actualizarTarjeta(datos);
         agregarFilaTabla(datos, true);
         agregarPuntoGrafica(datos);
