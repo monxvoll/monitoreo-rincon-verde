@@ -1,5 +1,6 @@
 import { API_URL, FINCAS, UMBRAL_TEMP, UMBRAL_CO2 } from './config.js';
 import { actualizarTarjeta, agregarFilaTabla } from './ui.js';
+import { cargarPuntosGrafica } from './chart.js';
 
 export async function cargarHistorial() {
     for (const finca of FINCAS) {
@@ -18,6 +19,9 @@ export async function cargarHistorial() {
 
                 if (i === 0) actualizarTarjeta(reg);
             });
+
+            // El historial llega del mas reciente al mas antiguo; la grafica lo necesita cronologico
+            cargarPuntosGrafica(finca, [...data.historial].reverse());
         } catch (err) {
             console.error(`Error cargando historial de ${finca}:`, err);
         }
