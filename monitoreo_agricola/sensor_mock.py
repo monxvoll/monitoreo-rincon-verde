@@ -1,16 +1,24 @@
-import time
-import json
-import random
 import os
-import redis
-from datetime import datetime
+import random
+import time
+from datetime import datetime, timezone
 
-# Configuracion de Redis
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-r = redis.Redis(host=REDIS_HOST, port=6379, db=0, decode_responses=True)
+import psycopg
+
+# Configuracion de PostgreSQL
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://postgres:postgres@localhost:5433/monitoreo",
+)
 
 # Identificadores de las dos fincas
 FINCAS = ["finca_1", "finca_2"]
+
+INSERT_SQL = """
+INSERT INTO lecturas (finca_id, ts, temperatura, humedad, co2)
+VALUES (%s, %s, %s, %s, %s)
+"""
+
 
 def generar_datos(finca_id):
     """Genera datos simulados realistas para una finca."""
@@ -18,50 +26,79 @@ def generar_datos(finca_id):
     humedad = round(random.uniform(40.0, 90.0), 1)      # porcentaje
     co2 = round(random.uniform(400.0, 1000.0), 1)       # partes por millon
 
-    timestamp = datetime.now().isoformat()
+    timestamp = datetime.now(timezone.utc)
 
     return {
         "finca_id": finca_id,
         "timestamp": timestamp,
         "temperatura": temperatura,
         "humedad": humedad,
-        "co2": co2
+        "co2": co2,
     }
+
+
+def conectar():
+    """Intenta conectar a PostgreSQL reintentando hasta lograrlo."""
+    while True:
+        try:
+            conn = psycopg.connect(DATABASE_URL)
+            print("Conectado a PostgreSQL exitosamente.")
+            return conn
+        except psycopg.OperationalError as e:
+            print(
+                "ERROR: No se pudo conectar a PostgreSQL "
+                f"({e}). Reintentando en 5 segundos..."
+            )
+            time.sleep(5)
+
 
 def simular_y_enviar():
     print("Iniciando simulador de sensores...")
+    conn = conectar()
+
     try:
-        r.ping()
-        print("Conectado a Redis exitosamente.")
-    except redis.ConnectionError:
-        print("ERROR: No se pudo conectar a Redis. Asegurate de que el servidor Redis este en ejecucion.")
-        return
+        while True:
+            try:
+                for finca in FINCAS:
+                    datos = generar_datos(finca)
 
-    while True:
-        try:
-            for finca in FINCAS:
-                datos = generar_datos(finca)
-                datos_json = json.dumps(datos)
+                    with conn.cursor() as cur:
+                        cur.execute(
+                            INSERT_SQL,
+                            (
+                                datos["finca_id"],
+                                datos["timestamp"],
+                                datos["temperatura"],
+                                datos["humedad"],
+                                datos["co2"],
+                            ),
+                        )
+                    conn.commit()
 
-                # Guardar el estado actual de la finca
-                r.set(f"{finca}:estado_actual", datos_json)
+                    print(
+                        f"[{datos['timestamp'].isoformat()}] {finca}: "
+                        f"Temp={datos['temperatura']}C, "
+                        f"Hum={datos['humedad']}%, "
+                        f"CO2={datos['co2']}ppm"
+                    )
 
-                # Agregar al historial y recortar a los ultimos 50 registros
-                historial_key = f"{finca}:historial"
-                r.lpush(historial_key, datos_json)
-                r.ltrim(historial_key, 0, 49)
+                # Esperar 5 segundos antes de la siguiente lectura
+                time.sleep(5)
 
-                # Publicar en el canal Pub/Sub para tiempo real
-                r.publish("fincas_updates", datos_json)
+            except psycopg.Error as e:
+                print(f"Error durante la simulacion: {e}")
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+                conn = conectar()
+                time.sleep(5)
 
-                print(f"[{datos['timestamp']}] {finca}: Temp={datos['temperatura']}C, Hum={datos['humedad']}%, CO2={datos['co2']}ppm")
+    except KeyboardInterrupt:
+        print("Simulador detenido.")
+    finally:
+        conn.close()
 
-            # Esperar 5 segundos antes de la siguiente lectura
-            time.sleep(5)
-
-        except Exception as e:
-            print(f"Error durante la simulacion: {e}")
-            time.sleep(5)
 
 if __name__ == "__main__":
     simular_y_enviar()
